@@ -114,7 +114,7 @@ try {
   await evaluate("document.querySelector('#card-right').click()");
   await waitFor("document.querySelector('#flash-right-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('2 /')", "flashcard right grading");
   await evaluate(`(() => { const card = document.querySelector('#active-flashcard'); const options = { bubbles: true, pointerId: 8, pointerType: 'touch', clientY: 100, isPrimary: true }; card.dispatchEvent(new PointerEvent('pointerdown', { ...options, clientX: 200 })); card.dispatchEvent(new PointerEvent('pointermove', { ...options, clientX: 100 })); card.dispatchEvent(new PointerEvent('pointerup', { ...options, clientX: 100 })); })()`);
-  await waitFor("document.querySelector('#flash-wrong-count')?.textContent === '1'", "flashcard swipe grading");
+  await waitFor("document.querySelector('#flash-wrong-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('3 /')", "flashcard swipe grading");
   await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-mode=\"quiz\"]').click()");
   await waitFor("document.querySelector('.answer-option') !== null", "quiz mode");
   await evaluate("document.querySelector('.answer-option').click()");
@@ -129,7 +129,7 @@ try {
   await waitFor("!document.querySelector('#admin-view').hidden", "admin studio");
   await check("document.querySelectorAll('.admin-card-row').length > 0", "admin cards editable");
   await check("document.querySelector('#admin-download-index') !== null", "admin export controls available");
-  await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='kpz2026'; document.querySelector('#auth-form').requestSubmit()");
+  await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");
   await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "student login");
   await check("document.querySelector('#admin-nav').hidden", "admin tools hidden from students");
   if (exceptions.length) throw new Error(`Browser exceptions: ${exceptions.join(", ")}`);

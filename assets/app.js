@@ -320,6 +320,7 @@ function renderFlashcards() {
 
 function gradeFlashcard(gotIt) {
   if (state.study.transitioning) return;
+  const studySession = state.study;
   state.study.transitioning = true;
   if (gotIt) state.study.correct += 1;
   else state.study.incorrect += 1;
@@ -328,6 +329,7 @@ function gradeFlashcard(gotIt) {
   const flashcard = $("#active-flashcard");
   flashcard.classList.add(gotIt ? "swipe-right" : "swipe-left");
   setTimeout(() => {
+    if (state.study !== studySession || state.study.mode !== "flashcards") return;
     if (state.study.index === state.study.cards.length - 1) {
       return renderResults(
         "Flashcards done",

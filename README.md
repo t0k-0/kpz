@@ -14,7 +14,7 @@ Then open the local URL printed in the terminal.
 
 Default access codes:
 
-- Student: `kpz2026`
+- Student: `vyzmizikovanej`
 - Admin: `kpz-admin`
 
 Change both before sharing the site. See “Access codes” below.
