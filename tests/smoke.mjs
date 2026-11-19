@@ -143,7 +143,7 @@ try {
   await check("document.querySelectorAll('.memory-card').length === 12", "memory board renders six pairs");
 
   await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-nav=\"worksheets\"]').click()");
-  await check("document.querySelectorAll('.worksheet-card').length === 2", "worksheet gallery loads");
+  await check("document.querySelectorAll('.worksheet-card').length === 7", "worksheet gallery loads all documents");
   await check(noHorizontalOverflow, "worksheets fit 320px viewport");
   await evaluate("document.querySelector('[data-nav=\"admin\"]').click()");
   await waitFor("!document.querySelector('#admin-view').hidden", "admin studio");

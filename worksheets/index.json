@@ -1,0 +1,46 @@
+{
+  "worksheets": [
+    {
+      "title": "Buněčné dýchání",
+      "description": "Pracovní materiál k buněčnému dýchání.",
+      "category": "Biologie",
+      "file": "bunecnedychani.pdf"
+    },
+    {
+      "title": "Etologie",
+      "description": "Pracovní materiál k chování živočichů.",
+      "category": "Biologie",
+      "file": "etologie.pdf"
+    },
+    {
+      "title": "Fotosyntéza",
+      "description": "Pracovní materiál k fotosyntéze.",
+      "category": "Biologie",
+      "file": "fotosynteza.pdf"
+    },
+    {
+      "title": "Houbovci a žahavci",
+      "description": "Pracovní materiál k houbovcům a žahavcům.",
+      "category": "Biologie",
+      "file": "houbovcizahavci.pdf"
+    },
+    {
+      "title": "Ontogeneze mnohobuněčných",
+      "description": "Pracovní materiál k vývoji mnohobuněčných organismů.",
+      "category": "Biologie",
+      "file": "ontogenezemnohobunecnych.pdf"
+    },
+    {
+      "title": "Poznávačka organismů 2",
+      "description": "Dokument k procvičování poznávání organismů.",
+      "category": "Biologie",
+      "file": "poznavackaorganizmu2.docx"
+    },
+    {
+      "title": "Prvoci",
+      "description": "Pracovní materiál k prvokům.",
+      "category": "Biologie",
+      "file": "prvoci.pdf"
+    }
+  ]
+}
