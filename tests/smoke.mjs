@@ -173,6 +173,11 @@ try {
   await check("document.querySelector('.flashcard-image') && getComputedStyle(document.querySelector('.flashcard-image')).objectFit === 'cover'", "URL image renders cropped on flashcard");
   await evaluate("state.currentSet = { id: 'image-test', cards: [window.__imageCard, { term: 'Jiný organismus', definition: 'Jiná definice', image: '', imageFit: 'contain' }] }; state.study = { mode: 'quiz', index: 0, cards: [window.__imageCard], correct: 0, incorrect: 0, answered: false }; renderQuiz()");
   await check("document.querySelector('.quiz-question .prompt-image') && [...document.querySelectorAll('.answer-option')].some((option) => option.textContent === window.__imageCard.term)", "image identification works in quiz mode");
+  await evaluate("state.study = { mode: 'memory', index: 0, cards: [window.__imageCard], correct: 0, incorrect: 0, answered: false }; renderMemory()");
+  await check("(() => { const pair = state.study.memory.deck; return pair.some((card) => card.kind === 'image') && pair.some((card) => card.kind === 'definition' && card.text === window.__imageCard.definition) && !pair.some((card) => card.kind === 'term'); })()", "image memory pairs picture with definition");
+  await evaluate("clearInterval(state.memoryTimer); state.study = { mode: 'memory', index: 0, cards: [{ term: 'Název', definition: 'Definice', image: '', imageFit: 'contain' }], correct: 0, incorrect: 0, answered: false }; renderMemory()");
+  await check("(() => { const pair = state.study.memory.deck; return pair.some((card) => card.kind === 'term' && card.text === 'Název') && pair.some((card) => card.kind === 'definition' && card.text === 'Definice'); })()", "text memory pairs title with definition");
+  await evaluate("clearInterval(state.memoryTimer)");
   await check("document.querySelector('#admin-download-index') !== null", "admin export controls available");
   await check(noHorizontalOverflow, "admin fits 320px viewport");
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");

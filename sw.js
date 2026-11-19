@@ -1,4 +1,4 @@
-const CACHE = "kpz-v12-blind-map";
+const CACHE = "kpz-v13-memory-pairs";
 const CORE = [
   "./",
   "./index.html",

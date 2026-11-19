@@ -474,7 +474,7 @@ function renderMemory() {
   const pairs = state.study.cards.slice(0, Math.min(6, state.study.cards.length));
   const deck = shuffle(pairs.flatMap((card, index) => getCardImageSource(card) ? [
     { pair: index, image: card.image, imageFit: card.imageFit, kind: "image" },
-    { pair: index, text: card.term, kind: "term" },
+    { pair: index, text: card.definition, kind: "definition" },
   ] : [
     { pair: index, text: card.term, kind: "term" },
     { pair: index, text: card.definition, kind: "definition" },
