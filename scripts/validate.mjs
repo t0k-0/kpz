@@ -70,7 +70,9 @@ for (const entry of setIndex.sets) {
 }
 
 for (const worksheet of worksheetIndex.worksheets) {
-  if (!worksheet.title || !worksheet.category || !worksheet.file) throw new Error(`Invalid worksheet entry: ${JSON.stringify(worksheet)}`);
+  const addedDate = new Date(`${worksheet.added}T12:00:00Z`);
+  const validAddedDate = /^\d{4}-\d{2}-\d{2}$/.test(worksheet.added || "") && !Number.isNaN(addedDate.valueOf()) && addedDate.toISOString().slice(0, 10) === worksheet.added;
+  if (!worksheet.title || !worksheet.category || !worksheet.file || !validAddedDate) throw new Error(`Invalid worksheet entry: ${JSON.stringify(worksheet)}`);
   await access(join(root, "worksheets", worksheet.file));
   if (worksheet.thumbnail) await access(join(root, "worksheets", worksheet.thumbnail));
 }

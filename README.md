@@ -59,7 +59,7 @@ The Admin page can build the file for you. It stores drafts only in the current 
 
 ## Add worksheets
 
-Place worksheet files in `worksheets/` and add their details to `worksheets/index.json`. See `worksheets/README.md` for the exact format. PDFs, images and other browser-readable documents can be opened or downloaded from the gallery.
+Place worksheet files in `worksheets/` and add their details, including the `added` date, to `worksheets/index.json`. See `worksheets/README.md` for the exact format. The gallery groups documents by that date and shows the newest first. PDFs, images and other browser-readable documents can be opened or downloaded from the gallery.
 
 ## Edit the blind map
 

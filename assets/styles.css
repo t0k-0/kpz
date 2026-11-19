@@ -201,7 +201,10 @@ h3 { margin-bottom: var(--s1); font-size: 1.45rem; line-height: 1.1; }
 .filter-row { display: flex; gap: var(--s1); overflow-x: auto; margin-bottom: var(--s4); padding-bottom: var(--s2); scrollbar-width: none; }
 .filter-chip { flex: 0 0 auto; padding: .55rem .85rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: transparent; font-size: .875rem; font-weight: 600; cursor: pointer; }
 .filter-chip.active { color: #17100d; border-color: var(--accent); background: var(--accent); }
-.worksheet-grid { display: grid; grid-template-columns: 1fr; gap: var(--s3); }
+.worksheet-timeline { display: grid; gap: var(--s6); }
+.worksheet-date-heading { margin: 0 0 var(--s3); padding-bottom: var(--s2); border-bottom: 1px solid var(--line); font-family: "IBM Plex Sans", sans-serif; font-size: 1rem; font-weight: 600; }
+.worksheet-date-heading time { color: var(--ink); }
+.worksheet-date-grid { display: grid; grid-template-columns: 1fr; gap: var(--s3); }
 .worksheet-card { display: grid; grid-template-columns: 220px 1fr; min-height: 190px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: transparent; }
 .worksheet-preview { min-height: 190px; display: grid; place-items: center; border-right: 1px solid var(--line); color: var(--accent); background: var(--surface); font-family: "Newsreader", Georgia, serif; font-size: 2rem; font-weight: 700; }
 .worksheet-preview img { width: 100%; height: 100%; object-fit: cover; }

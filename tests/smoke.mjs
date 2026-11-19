@@ -167,6 +167,7 @@ try {
 
   await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-nav=\"worksheets\"]').click()");
   await check("document.querySelectorAll('.worksheet-card').length === 7", "worksheet gallery loads all documents");
+  await check("(() => { const shown = [...document.querySelectorAll('[data-worksheet-date]')].map((group) => group.dataset.worksheetDate); const expected = [...new Set(state.worksheets.map((item) => item.added))].sort().reverse(); return shown.join('|') === expected.join('|'); })()", "worksheets are grouped newest first");
   await check(noHorizontalOverflow, "worksheets fit 320px viewport");
   await evaluate("document.querySelector('[data-nav=\"admin\"]').click()");
   await waitFor("!document.querySelector('#admin-view').hidden", "admin studio");

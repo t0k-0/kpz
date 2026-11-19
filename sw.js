@@ -1,4 +1,4 @@
-const CACHE = "kpz-v15-map-detail";
+const CACHE = "kpz-v16-worksheet-dates";
 const CORE = [
   "./",
   "./index.html",

@@ -543,13 +543,33 @@ function renderWorksheets(activeCategory = "Vše") {
   const categories = ["Vše", ...new Set(state.worksheets.map((item) => item.category))];
   $("#worksheet-filters").innerHTML = categories.map((category) => `<button class="filter-chip ${category === activeCategory ? "active" : ""}" type="button" data-category="${escapeAttribute(category)}">${escapeHtml(category)}</button>`).join("");
   $$(".filter-chip").forEach((button) => button.addEventListener("click", () => renderWorksheets(button.dataset.category)));
-  const worksheets = state.worksheets.filter((item) => activeCategory === "Vše" || item.category === activeCategory);
-  $("#worksheet-grid").innerHTML = worksheets.map((item) => {
+  const worksheets = state.worksheets
+    .filter((item) => activeCategory === "Vše" || item.category === activeCategory)
+    .sort((first, second) => second.added.localeCompare(first.added) || first.title.localeCompare(second.title, "cs"));
+  const groups = worksheets.reduce((result, item) => {
+    if (!result.has(item.added)) result.set(item.added, []);
+    result.get(item.added).push(item);
+    return result;
+  }, new Map());
+  $("#worksheet-grid").innerHTML = [...groups].map(([date, items]) => `<section class="worksheet-date-group" data-worksheet-date="${escapeAttribute(date)}"><h2 class="worksheet-date-heading"><time datetime="${escapeAttribute(date)}">${escapeHtml(formatWorksheetDate(date))}</time></h2><div class="worksheet-date-grid">${items.map(renderWorksheetCard).join("")}</div></section>`).join("");
+  $("#empty-worksheets").hidden = worksheets.length > 0;
+}
+
+function renderWorksheetCard(item) {
     const extension = item.file.split(".").pop().toUpperCase();
     const preview = item.thumbnail ? `<img src="worksheets/${escapeAttribute(item.thumbnail)}" alt="" />` : escapeHtml(extension);
     return `<article class="worksheet-card"><div class="worksheet-preview">${preview}</div><div class="worksheet-card-body"><span class="set-subject">${escapeHtml(item.category)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><div class="worksheet-card-actions"><a class="button button-light" href="worksheets/${escapeAttribute(item.file)}" target="_blank" rel="noopener">Otevřít</a><a class="button button-secondary" href="worksheets/${escapeAttribute(item.file)}" download>Stáhnout</a></div></div></article>`;
-  }).join("");
-  $("#empty-worksheets").hidden = worksheets.length > 0;
+}
+
+function formatWorksheetDate(value) {
+  const date = new Date(`${value}T12:00:00`);
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const daysAgo = Math.round((startOfToday - startOfDate) / 86400000);
+  if (daysAgo === 0) return "Dnes";
+  if (daysAgo === 1) return "Včera";
+  return new Intl.DateTimeFormat("cs-CZ", { day: "numeric", month: "long", year: date.getFullYear() === today.getFullYear() ? undefined : "numeric" }).format(date);
 }
 
 function renderAdmin() {

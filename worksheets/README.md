@@ -9,8 +9,9 @@ Soubor `index.json` musí ve složce zůstat. Pro každý nový dokument do pole
   "title": "Název pracovního listu",
   "description": "Krátký popis pro ostatní.",
   "category": "Biologie",
+  "added": "2026-11-19",
   "file": "pracovni-list.pdf"
 }
 ```
 
-Název v poli `file` se musí přesně shodovat s názvem dokumentu. Používej malá písmena bez mezer a diakritiky.
+Pole `added` obsahuje datum přidání ve formátu `RRRR-MM-DD`. Galerie podle něj seskupuje dokumenty a zobrazuje nejnovější nahoře. Název v poli `file` se musí přesně shodovat s názvem dokumentu. Používej malá písmena bez mezer a diakritiky.
