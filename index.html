@@ -13,7 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,600;6..72,700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="assets/map-trainer.css" />
     <script src="assets/app.js" defer></script>
+    <script src="assets/map-trainer.js" defer></script>
   </head>
   <body>
     <div class="ambient ambient-one"></div>
@@ -107,6 +109,92 @@
           <div id="study-stage" class="study-stage"></div>
         </section>
 
+        <section id="map-view" class="view map-view" hidden>
+          <div class="map-page-heading">
+            <div><h1>Slepá mapa</h1><p>Najdi pojem na mapě. Oblast se ukáže až po odpovědi.</p></div>
+            <button id="map-editor-toggle" class="button button-secondary" type="button" hidden>Upravit mapu</button>
+          </div>
+
+          <div id="map-student-controls">
+            <div id="map-setup" class="map-control-bar">
+              <label>Kategorie<select id="map-category"></select></label>
+              <label>Počet míst<select id="map-round-size"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="all">Všechna</option></select></label>
+              <button id="map-start" class="button button-primary" type="button">Spustit test</button>
+            </div>
+
+            <div id="map-question" class="map-question" hidden>
+              <div><span id="map-question-category" class="map-kicker"></span><h2 id="map-question-title"></h2></div>
+              <div class="map-question-actions"><span id="map-score"></span><button id="map-skip" class="button button-quiet button-small" type="button">Nevím</button></div>
+            </div>
+          </div>
+
+          <div class="map-canvas-shell">
+            <svg id="blind-map" viewBox="0 0 1000 500" role="img" aria-label="Interaktivní slepá mapa světa">
+              <rect class="map-ocean" width="1000" height="500"></rect>
+              <g id="map-grid-layer" class="map-grid-layer"></g>
+              <g id="map-land-layer" class="map-land-layer"></g>
+              <g id="map-target-layer" class="map-target-layer"></g>
+              <g id="map-draft-layer" class="map-draft-layer"></g>
+              <g id="map-marker-layer" class="map-marker-layer"></g>
+            </svg>
+            <div class="map-zoom" aria-label="Přiblížení mapy">
+              <button id="map-zoom-in" type="button" aria-label="Přiblížit">+</button>
+              <button id="map-zoom-out" type="button" aria-label="Oddálit">−</button>
+              <button id="map-zoom-reset" type="button" aria-label="Celý svět">1:1</button>
+            </div>
+            <p id="map-canvas-hint" class="map-canvas-hint">Klikni na správné místo. Mapu posuneš tažením.</p>
+          </div>
+
+          <div id="map-feedback" class="map-feedback" hidden>
+            <div><strong id="map-feedback-title"></strong><span id="map-feedback-copy"></span></div>
+            <button id="map-next" class="button button-primary" type="button">Další místo</button>
+          </div>
+
+          <section id="map-results" class="map-results" hidden>
+            <h2 id="map-results-title"></h2><p id="map-results-copy"></p>
+            <div class="map-results-actions"><button id="map-retry-errors" class="button button-secondary" type="button">Zopakovat chyby</button><button id="map-new-round" class="button button-primary" type="button">Nový test</button></div>
+            <div id="map-results-list" class="map-results-list"></div>
+          </section>
+
+          <section id="map-editor" class="map-editor" hidden>
+            <div class="section-heading compact"><div><h2>Editor mapy</h2><p>Kliknutím kresli body, linie nebo oblasti. Změny nejdřív ulož lokálně, potom stáhni JSON.</p></div><button id="map-editor-close" class="button button-quiet" type="button">Zavřít editor</button></div>
+            <div class="map-editor-layout">
+              <aside class="map-editor-sidebar">
+                <label for="map-item-search">Hledat pojem</label>
+                <input id="map-item-search" type="search" placeholder="Název místa" />
+                <button id="map-item-new" class="button button-secondary button-wide" type="button">Nový pojem</button>
+                <div id="map-item-list" class="map-item-list"></div>
+              </aside>
+              <div class="map-editor-form">
+                <div class="map-editor-fields">
+                  <label>Název<input id="map-item-title" type="text" /></label>
+                  <label>Kategorie<select id="map-item-category"></select></label>
+                  <label>Tolerance v km<input id="map-item-radius" type="number" min="10" max="3000" step="10" /></label>
+                </div>
+                <div class="map-tool-row" aria-label="Nástroje kreslení">
+                  <button class="map-tool active" data-map-tool="pan" type="button">Posun mapy</button>
+                  <button class="map-tool" data-map-tool="point" type="button">Bod</button>
+                  <button class="map-tool" data-map-tool="line" type="button">Linie</button>
+                  <button class="map-tool" data-map-tool="polygon" type="button">Oblast</button>
+                  <button id="map-finish-shape" class="button button-secondary" type="button" hidden>Dokončit tvar</button>
+                </div>
+                <p id="map-editor-instruction" class="map-editor-instruction">Vyber nástroj a pojem. U bodu stačí jeden klik, u linie nebo oblasti přidej více vrcholů.</p>
+                <div class="map-editor-actions">
+                  <button id="map-item-apply" class="button button-primary" type="button">Použít údaje</button>
+                  <button id="map-target-clear" class="button button-secondary" type="button">Smazat geometrii</button>
+                  <button id="map-item-delete" class="button button-secondary" type="button">Smazat pojem</button>
+                </div>
+                <div class="map-editor-export">
+                  <button id="map-draft-save" class="button button-light" type="button">Uložit koncept</button>
+                  <button id="map-json-download" class="button button-light" type="button">Stáhnout JSON</button>
+                  <button id="map-draft-reset" class="button button-quiet" type="button">Vrátit publikovaná data</button>
+                </div>
+                <p id="map-editor-status" class="form-message" aria-live="polite"></p>
+              </div>
+            </div>
+          </section>
+        </section>
+
         <section id="worksheets-view" class="view" hidden>
           <div class="page-heading"><h1>Pracovní listy</h1><p>Já vím, žes to ztratil/a...</p></div>
           <div id="worksheet-filters" class="filter-row"></div>
@@ -146,6 +234,7 @@
 
       <nav class="bottom-nav" aria-label="Hlavní navigace">
         <button class="nav-item active" data-nav="dashboard" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z"></path><path d="M9 20v-6h6v6"></path></svg><small>Domů</small></button>
+        <button class="nav-item" data-nav="map" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"></path><path d="M9 3v15M15 6v15"></path></svg><small>Mapa</small></button>
         <button class="nav-item" data-nav="worksheets" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><small>Listy</small></button>
         <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg><small>Správa</small></button>
       </nav>

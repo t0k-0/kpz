@@ -8,8 +8,12 @@ const required = [
   "404.html",
   "assets/app.js",
   "assets/styles.css",
+  "assets/map-trainer.js",
+  "assets/map-trainer.css",
   "data/config.json",
   "data/sets/index.json",
+  "data/maps/world-assignment.json",
+  "data/maps/ne_110m_land.geojson",
   "worksheets/index.json",
   "manifest.webmanifest",
   "robots.txt",
@@ -21,6 +25,8 @@ for (const file of required) await access(join(root, file));
 const readJson = async (file) => JSON.parse(await readFile(join(root, file), "utf8"));
 const config = await readJson("data/config.json");
 const setIndex = await readJson("data/sets/index.json");
+const mapAssignment = await readJson("data/maps/world-assignment.json");
+const mapLand = await readJson("data/maps/ne_110m_land.geojson");
 const worksheetIndex = await readJson("worksheets/index.json");
 await readJson("manifest.webmanifest");
 
@@ -30,6 +36,23 @@ if (!studentHashes.length || studentHashes.some((hash) => !/^[a-f0-9]{64}$/.test
 }
 if (!Array.isArray(setIndex.sets) || setIndex.sets.length === 0) throw new Error("At least one study set is required.");
 if (!Array.isArray(worksheetIndex.worksheets)) throw new Error("worksheets/index.json must contain a worksheets array.");
+if (!Array.isArray(mapLand.features) || mapLand.features.length === 0) throw new Error("Natural Earth land data is empty.");
+
+const mapCategories = new Set((mapAssignment.categories || []).map((category) => category.id));
+const mapIds = new Set();
+if (!Array.isArray(mapAssignment.items) || mapAssignment.items.length < 180) throw new Error("Blind-map assignment must contain all assignment terms.");
+for (const item of mapAssignment.items) {
+  if (!item.id || !item.title || !mapCategories.has(item.category) || mapIds.has(item.id)) throw new Error(`Invalid or duplicate map item: ${JSON.stringify(item)}`);
+  mapIds.add(item.id);
+  const target = item.target;
+  if (!target || !["point", "line", "polygon"].includes(target.type)) throw new Error(`Map item ${item.id} has no valid target.`);
+  const coordinates = target.type === "point" ? [target.coordinates] : target.coordinates;
+  const minimum = target.type === "point" ? 1 : target.type === "line" ? 2 : 3;
+  if (!Array.isArray(coordinates) || coordinates.length < minimum || coordinates.some((coordinate) => !Array.isArray(coordinate) || coordinate.length !== 2 || !Number.isFinite(coordinate[0]) || !Number.isFinite(coordinate[1]) || Math.abs(coordinate[0]) > 180 || Math.abs(coordinate[1]) > 90)) {
+    throw new Error(`Map item ${item.id} has invalid coordinates.`);
+  }
+  if (!Number.isFinite(target.radiusKm) || target.radiusKm < 0) throw new Error(`Map item ${item.id} has invalid tolerance.`);
+}
 
 const ids = new Set();
 for (const entry of setIndex.sets) {
@@ -48,4 +71,4 @@ for (const worksheet of worksheetIndex.worksheets) {
   if (worksheet.thumbnail) await access(join(root, "worksheets", worksheet.thumbnail));
 }
 
-console.log(`Validated ${setIndex.sets.length} study sets and ${worksheetIndex.worksheets.length} worksheets.`);
+console.log(`Validated ${setIndex.sets.length} study sets, ${worksheetIndex.worksheets.length} worksheets and ${mapAssignment.items.length} map targets.`);

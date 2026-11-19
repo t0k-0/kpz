@@ -152,6 +152,7 @@ function showView(name) {
   $$(".view").forEach((view) => { view.hidden = view.id !== `${name}-view`; });
   $$(".nav-item").forEach((button) => button.classList.toggle("active", button.dataset.nav === name));
   if (name === "dashboard") renderDashboard();
+  if (name === "map") window.KPZMap?.show(state.role);
   if (name === "worksheets") renderWorksheets("Vše");
   if (name === "admin") renderAdmin();
   $("#main-content").focus({ preventScroll: true });

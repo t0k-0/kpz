@@ -1,13 +1,17 @@
-const CACHE = "kpz-v11-random-queue";
+const CACHE = "kpz-v12-blind-map";
 const CORE = [
   "./",
   "./index.html",
   "./assets/styles.css",
   "./assets/app.js",
+  "./assets/map-trainer.css",
+  "./assets/map-trainer.js",
   "./assets/icon.svg",
   "./manifest.webmanifest",
   "./data/config.json",
   "./data/sets/index.json",
+  "./data/maps/world-assignment.json",
+  "./data/maps/ne_110m_land.geojson",
   "./worksheets/index.json"
 ];
 

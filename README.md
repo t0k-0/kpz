@@ -1,6 +1,6 @@
 # KPZ
 
-KPZ is a dark, phone-first Czech-language study web app for a group of friends. A single SQL-like study-set file powers four modes: swipeable flashcards with right/wrong grading, typed learning, multiple-choice quizzes and a memory matching game. It also includes a worksheet gallery and a browser-based admin content editor.
+KPZ is a dark, phone-first Czech-language study web app for a group of friends. A single SQL-like study-set file powers four modes: swipeable flashcards with right/wrong grading, typed learning, multiple-choice quizzes and a memory matching game. It also includes a worksheet gallery, a world blind-map trainer and browser-based admin editors.
 
 ## Run locally
 
@@ -60,6 +60,12 @@ The Admin page can build the file for you. It stores drafts only in the current 
 ## Add worksheets
 
 Place worksheet files in `worksheets/` and add their details to `worksheets/index.json`. See `worksheets/README.md` for the exact format. PDFs, images and other browser-readable documents can be opened or downloaded from the gallery.
+
+## Edit the blind map
+
+The **Mapa** section contains the world blind-map trainer. Admins can open **Upravit mapu**, select an assignment term, and draw a point, line or polygon directly on the same map students use. Drafts stay in the current browser until **Stáhnout JSON** is used. Replace `data/maps/world-assignment.json` with that download and publish it through GitHub Desktop.
+
+The base land outline comes from the public-domain Natural Earth 1:110m dataset. See `data/maps/README.md` for the data format and source details.
 
 ## Access codes
 

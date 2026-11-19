@@ -116,6 +116,22 @@ try {
   await check("document.querySelector('.set-card h3').textContent.length > 0", "Czech study content");
   await check("getComputedStyle(document.querySelector('.set-card-main')).borderRadius === '16px' && getComputedStyle(document.querySelector('#continue-panel')).backgroundImage === 'none'", "flat dashboard surfaces");
   await check(noHorizontalOverflow, "dashboard fits 320px viewport");
+  await evaluate("document.querySelector('[data-nav=\"map\"]').click()");
+  await waitFor("document.querySelector('#blind-map').dataset.ready === 'true'", "blind map data");
+  await check("[...document.querySelectorAll('#map-land-layer path')].some((path) => path.getAttribute('d').length > 1000) && document.querySelectorAll('#map-category option').length === 14", "Natural Earth map and assignment categories load");
+  await check("!document.querySelector('#map-editor-toggle').hidden", "map editor is available to admin");
+  await check(noHorizontalOverflow, "blind map fits 320px viewport");
+  await evaluate("document.querySelector('#map-start').click()");
+  await waitFor("!document.querySelector('#map-question').hidden", "blind map round starts");
+  await evaluate(`(() => { const map = document.querySelector('#blind-map'); const rect = map.getBoundingClientRect(); const options = { bubbles: true, pointerId: 9, pointerType: 'mouse', button: 0, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }; map.dispatchEvent(new PointerEvent('pointerdown', options)); map.dispatchEvent(new PointerEvent('pointerup', options)); })()`);
+  await waitFor("!document.querySelector('#map-feedback').hidden && document.querySelector('#map-target-layer').children.length > 0", "blind map answer reveals target");
+  await evaluate("document.querySelector('#map-editor-toggle').click()");
+  await waitFor("!document.querySelector('#map-editor').hidden", "blind map editor opens");
+  await check("document.querySelectorAll('#map-item-list [data-map-item]').length >= 184 && document.querySelectorAll('[data-map-tool]').length === 4", "map editor contains all assignment terms and drawing tools");
+  await evaluate("document.querySelector('[data-map-tool=\"point\"]').click(); (() => { const map = document.querySelector('#blind-map'); const rect = map.getBoundingClientRect(); const options = { bubbles: true, pointerId: 10, pointerType: 'mouse', button: 0, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }; map.dispatchEvent(new PointerEvent('pointerdown', options)); map.dispatchEvent(new PointerEvent('pointerup', options)); })()");
+  await check("document.querySelector('#map-target-layer .target-point') !== null", "admin can draw a map point");
+  await evaluate("document.querySelector('[data-nav=\"dashboard\"]').click()");
+  await waitFor("!document.querySelector('#dashboard-view').hidden", "return from map");
   await evaluate("document.querySelector('#set-search').value=state.sets[0].subject; document.querySelector('#set-search').dispatchEvent(new Event('input', { bubbles: true }))");
   await check("document.querySelectorAll('.subject-section').length >= 1 && [...document.querySelectorAll('.subject-heading h3')].every((heading) => heading.textContent.toLocaleLowerCase().includes(state.sets[0].subject.toLocaleLowerCase()))", "search hides empty subject sections");
 
@@ -162,6 +178,8 @@ try {
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");
   await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "student login");
   await check("document.querySelector('#admin-nav').hidden", "admin tools hidden from students");
+  await evaluate("document.querySelector('[data-nav=\"map\"]').click()");
+  await check("document.querySelector('#map-editor-toggle').hidden", "map editor hidden from students");
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovana'; document.querySelector('#auth-form').requestSubmit()");
   await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "second student code login");
   await check("document.querySelector('#admin-nav').hidden", "second student code has student-only access");
