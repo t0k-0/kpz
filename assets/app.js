@@ -168,15 +168,41 @@ function renderSetGrid() {
   const grid = $("#set-grid");
   grid.innerHTML = "";
   const sets = state.sets.filter((set) => `${set.title} ${set.description} ${set.subject}`.toLowerCase().includes(query));
+  const collator = new Intl.Collator("cs", { sensitivity: "base" });
+  const subjects = new Map();
+
   for (const set of sets) {
-    const card = $("#set-card-template").content.firstElementChild.cloneNode(true);
-    card.style.setProperty("--card-color", colorMap[set.color] || colorMap.violet);
-    $(".set-subject", card).textContent = set.subject;
-    $("h3", card).textContent = set.title;
-    $("p", card).textContent = set.description;
-    $(".set-size", card).textContent = `${czechCount(set.cards.length, "pojem", "pojmy", "pojmů")}${set.isDraft ? " · místní koncept" : ""}`;
-    $("button", card).addEventListener("click", () => openSet(set.id));
-    grid.append(card);
+    const subject = set.subject || "Ostatní";
+    if (!subjects.has(subject)) subjects.set(subject, []);
+    subjects.get(subject).push(set);
+  }
+
+  for (const [subject, subjectSets] of [...subjects.entries()].sort(([first], [second]) => collator.compare(first, second))) {
+    const section = document.createElement("section");
+    section.className = "subject-section";
+
+    const heading = document.createElement("header");
+    heading.className = "subject-heading";
+    const title = document.createElement("h3");
+    title.textContent = subject;
+    const count = document.createElement("span");
+    count.textContent = czechCount(subjectSets.length, "sada", "sady", "sad");
+    heading.append(title, count);
+
+    const list = document.createElement("div");
+    list.className = "subject-set-list";
+    for (const set of subjectSets.sort((first, second) => collator.compare(first.title, second.title))) {
+      const card = $("#set-card-template").content.firstElementChild.cloneNode(true);
+      card.style.setProperty("--card-color", colorMap[set.color] || colorMap.violet);
+      $("h3", card).textContent = set.title;
+      $("p", card).textContent = set.description;
+      $(".set-size", card).textContent = `${czechCount(set.cards.length, "pojem", "pojmy", "pojmů")}${set.isDraft ? " · místní koncept" : ""}`;
+      $("button", card).addEventListener("click", () => openSet(set.id));
+      list.append(card);
+    }
+
+    section.append(heading, list);
+    grid.append(section);
   }
   $("#empty-sets").hidden = sets.length > 0;
 }

@@ -1,4 +1,4 @@
-const CACHE = "kpz-v8-editorial-system";
+const CACHE = "kpz-v9-subject-home";
 const CORE = [
   "./",
   "./index.html",

@@ -112,9 +112,12 @@ try {
   await check("document.documentElement.lang === 'cs'", "Czech document language");
   await check("document.querySelector('#role-pill').textContent === 'Správce'", "admin access");
   await check("document.querySelectorAll('.set-card').length === 3", "three study sets load");
-  await check("document.querySelector('.set-card h3').textContent === 'Buňka a její části'", "Czech study content");
+  await check("[...document.querySelectorAll('.subject-heading h3')].map((heading) => heading.textContent).join('|') === 'Angličtina|Biologie|Dějepis'", "home is grouped into sorted subjects");
+  await check("[...document.querySelectorAll('.set-card h3')].some((heading) => heading.textContent === 'Buňka a její části')", "Czech study content");
   await check("getComputedStyle(document.querySelector('.set-card-main')).borderRadius === '16px' && getComputedStyle(document.querySelector('#continue-panel')).backgroundImage === 'none'", "flat dashboard surfaces");
   await check(noHorizontalOverflow, "dashboard fits 320px viewport");
+  await evaluate("document.querySelector('#set-search').value='buňka'; document.querySelector('#set-search').dispatchEvent(new Event('input', { bubbles: true }))");
+  await check("document.querySelectorAll('.subject-section').length === 1 && document.querySelector('.subject-heading h3').textContent === 'Biologie'", "search hides empty subject sections");
 
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
