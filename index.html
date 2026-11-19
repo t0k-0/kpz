@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#101426" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="description" content="KPZ — one shared place for class flashcards, quizzes, memory practice and worksheets." />
+    <title>KPZ — Study together</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="assets/app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <div id="auth-screen" class="auth-screen">
+      <main class="auth-card">
+        <div class="brand-mark brand-mark-large" aria-hidden="true">K</div>
+        <p class="eyebrow">Your class study space</p>
+        <h1>Small sessions.<br /><span>Big recall.</span></h1>
+        <p class="auth-copy">Flashcards, quick quizzes, memory practice and every worksheet your class needs.</p>
+        <form id="auth-form" class="auth-form">
+          <label for="access-code">Class access code</label>
+          <div class="password-row">
+            <input id="access-code" name="access-code" type="password" autocomplete="current-password" placeholder="Enter your code" required />
+            <button class="icon-button" id="toggle-password" type="button" aria-label="Show password">Show</button>
+          </div>
+          <button class="button button-primary button-wide" type="submit">Enter KPZ</button>
+          <p id="auth-error" class="form-message" role="alert"></p>
+        </form>
+        <p class="auth-footnote">The admin code opens editing tools automatically.</p>
+      </main>
+    </div>
+
+    <div id="app-shell" class="app-shell" hidden>
+      <header class="topbar">
+        <button id="brand-home" class="brand" type="button" aria-label="Go to dashboard">
+          <span class="brand-mark">K</span>
+          <span>KPZ</span>
+        </button>
+        <div class="topbar-actions">
+          <span id="role-pill" class="role-pill">Student</span>
+          <button id="logout-button" class="button button-quiet button-small" type="button">Log out</button>
+        </div>
+      </header>
+
+      <main id="main-content" class="main-content" tabindex="-1">
+        <section id="dashboard-view" class="view dashboard-view">
+          <div class="hero">
+            <div>
+              <p class="eyebrow">Good to see you</p>
+              <h1>What will you<br /><span>remember today?</span></h1>
+            </div>
+            <div class="streak-card">
+              <span class="streak-icon">✦</span>
+              <div><strong id="streak-count">0</strong><span>day streak</span></div>
+            </div>
+          </div>
+
+          <section class="continue-panel" id="continue-panel" hidden>
+            <div>
+              <p class="eyebrow">Continue learning</p>
+              <h2 id="continue-title">Your last set</h2>
+              <div class="progress-track"><span id="continue-progress"></span></div>
+            </div>
+            <button id="continue-button" class="button button-light" type="button">Continue</button>
+          </section>
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Study library</p>
+              <h2>Choose a set</h2>
+            </div>
+            <label class="search-box">
+              <span aria-hidden="true">⌕</span>
+              <input id="set-search" type="search" placeholder="Search sets" aria-label="Search study sets" />
+            </label>
+          </div>
+          <div id="set-grid" class="set-grid"></div>
+          <div id="empty-sets" class="empty-state" hidden>No sets match that search.</div>
+        </section>
+
+        <section id="set-view" class="view" hidden>
+          <button class="back-button" data-action="dashboard" type="button">‹ All sets</button>
+          <div id="set-hero" class="set-hero"></div>
+          <div class="mode-grid">
+            <button class="mode-card mode-flashcards" data-mode="flashcards" type="button"><span class="mode-icon">▱</span><span><strong>Flashcards</strong><small>Flip through the full set</small></span></button>
+            <button class="mode-card mode-learn" data-mode="learn" type="button"><span class="mode-icon">◎</span><span><strong>Learn</strong><small>Recall, rate, repeat</small></span></button>
+            <button class="mode-card mode-quiz" data-mode="quiz" type="button"><span class="mode-icon">✓</span><span><strong>Quiz</strong><small>Test what sticks</small></span></button>
+            <button class="mode-card mode-memory" data-mode="memory" type="button"><span class="mode-icon">◫</span><span><strong>Memory</strong><small>Match terms and meanings</small></span></button>
+          </div>
+          <section class="term-preview">
+            <div class="section-heading compact"><div><p class="eyebrow">In this set</p><h2>Terms</h2></div><span id="term-count" class="count-label"></span></div>
+            <div id="term-list" class="term-list"></div>
+          </section>
+        </section>
+
+        <section id="study-view" class="view study-view" hidden>
+          <div class="study-topline">
+            <button id="study-close" class="icon-button round" type="button" aria-label="Close study mode">×</button>
+            <div class="study-progress"><span id="study-progress-bar"></span></div>
+            <span id="study-counter" class="study-counter"></span>
+          </div>
+          <div id="study-stage" class="study-stage"></div>
+        </section>
+
+        <section id="worksheets-view" class="view" hidden>
+          <div class="page-heading"><p class="eyebrow">Class resources</p><h1>Worksheets</h1><p>Open or download the materials your class is using now.</p></div>
+          <div id="worksheet-filters" class="filter-row"></div>
+          <div id="worksheet-grid" class="worksheet-grid"></div>
+          <div id="empty-worksheets" class="empty-state" hidden>No worksheets in this category yet.</div>
+        </section>
+
+        <section id="admin-view" class="view" hidden>
+          <div class="page-heading"><p class="eyebrow">Admin access</p><h1>Content studio</h1><p>Edit a set in your browser, preview it instantly, then download the SQL file to commit to the repository.</p></div>
+          <div class="admin-notice"><strong>Static-site workflow</strong><span>Changes are saved in this browser. Download and replace the matching repository file to publish them for everyone.</span></div>
+          <div class="admin-layout">
+            <aside class="admin-sidebar">
+              <label for="admin-set-select">Study set</label>
+              <select id="admin-set-select"></select>
+              <button id="admin-new-set" class="button button-secondary button-wide" type="button">Create new set</button>
+              <div class="admin-actions">
+                <button id="admin-save-local" class="button button-primary button-wide" type="button">Save local draft</button>
+                <button id="admin-download-sql" class="button button-light button-wide" type="button">Download .sql</button>
+                <button id="admin-download-index" class="button button-light button-wide" type="button">Download index.json</button>
+              </div>
+              <p id="admin-status" class="form-message" aria-live="polite"></p>
+            </aside>
+            <div class="admin-editor">
+              <div class="editor-meta-grid">
+                <label>Title<input id="admin-title" type="text" /></label>
+                <label>Subject<input id="admin-subject" type="text" /></label>
+                <label class="span-two">Description<input id="admin-description" type="text" /></label>
+                <label>Color<select id="admin-color"><option value="violet">Violet</option><option value="coral">Coral</option><option value="mint">Mint</option><option value="blue">Blue</option><option value="yellow">Yellow</option></select></label>
+                <label>File name<input id="admin-filename" type="text" placeholder="my-set.sql" /></label>
+              </div>
+              <div class="editor-toolbar"><div><p class="eyebrow">Cards</p><h2>Terms & definitions</h2></div><button id="admin-add-card" class="button button-secondary" type="button">Add card</button></div>
+              <div id="admin-card-list" class="admin-card-list"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Primary navigation">
+        <button class="nav-item active" data-nav="dashboard" type="button"><span>⌂</span><small>Home</small></button>
+        <button class="nav-item" data-nav="worksheets" type="button"><span>▤</span><small>Worksheets</small></button>
+        <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><span>⚙</span><small>Admin</small></button>
+      </nav>
+    </div>
+
+    <template id="set-card-template">
+      <article class="set-card">
+        <button class="set-card-main" type="button">
+          <span class="set-subject"></span><h3></h3><p></p>
+          <span class="set-card-foot"><span class="set-size"></span><span class="set-arrow">›</span></span>
+        </button>
+      </article>
+    </template>
+  </body>
+</html>

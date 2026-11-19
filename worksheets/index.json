@@ -1,0 +1,17 @@
+{
+  "worksheets": [
+    {
+      "title": "Cell structure recap",
+      "description": "Label the organelles and connect each part to its function.",
+      "category": "Biology",
+      "file": "cell-structure-recap.svg",
+      "thumbnail": "cell-structure-recap.svg"
+    },
+    {
+      "title": "Adding your own worksheets",
+      "description": "A short guide for adding PDF, image and document resources.",
+      "category": "Guide",
+      "file": "README.md"
+    }
+  ]
+}

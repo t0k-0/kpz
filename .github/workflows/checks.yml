@@ -1,0 +1,21 @@
+name: Check KPZ
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Validate source and content
+        run: node scripts/validate.mjs
+      - name: Build static artifact
+        run: node scripts/build.mjs

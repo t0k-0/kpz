@@ -1,0 +1,16 @@
+# Generated site
+_site/
+
+# Local dependencies and logs
+node_modules/
+*.log
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local test output
+screenshots/
+test-results/
