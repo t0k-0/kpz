@@ -111,17 +111,17 @@ try {
   await waitFor("!document.querySelector('#app-shell').hidden", "admin login");
   await check("document.documentElement.lang === 'cs'", "Czech document language");
   await check("document.querySelector('#role-pill').textContent === 'Správce'", "admin access");
-  await check("document.querySelectorAll('.set-card').length === 3", "three study sets load");
-  await check("[...document.querySelectorAll('.subject-heading h3')].map((heading) => heading.textContent).join('|') === 'Angličtina|Biologie|Dějepis'", "home is grouped into sorted subjects");
-  await check("[...document.querySelectorAll('.set-card h3')].some((heading) => heading.textContent === 'Buňka a její části')", "Czech study content");
+  await check("state.sets.length > 0 && document.querySelectorAll('.set-card').length === state.sets.length", "study sets load");
+  await check("(() => { const shown = [...document.querySelectorAll('.subject-heading h3')].map((heading) => heading.textContent); const expected = [...new Set(state.sets.map((set) => set.subject))].sort(new Intl.Collator('cs', { sensitivity: 'base' }).compare); return shown.join('|') === expected.join('|'); })()", "home is grouped into sorted subjects");
+  await check("document.querySelector('.set-card h3').textContent.length > 0", "Czech study content");
   await check("getComputedStyle(document.querySelector('.set-card-main')).borderRadius === '16px' && getComputedStyle(document.querySelector('#continue-panel')).backgroundImage === 'none'", "flat dashboard surfaces");
   await check(noHorizontalOverflow, "dashboard fits 320px viewport");
-  await evaluate("document.querySelector('#set-search').value='buňka'; document.querySelector('#set-search').dispatchEvent(new Event('input', { bubbles: true }))");
-  await check("document.querySelectorAll('.subject-section').length === 1 && document.querySelector('.subject-heading h3').textContent === 'Biologie'", "search hides empty subject sections");
+  await evaluate("document.querySelector('#set-search').value=state.sets[0].subject; document.querySelector('#set-search').dispatchEvent(new Event('input', { bubbles: true }))");
+  await check("document.querySelectorAll('.subject-section').length >= 1 && [...document.querySelectorAll('.subject-heading h3')].every((heading) => heading.textContent.toLocaleLowerCase().includes(state.sets[0].subject.toLocaleLowerCase()))", "search hides empty subject sections");
 
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
-  await check("document.querySelectorAll('.term-row').length === 10", "set terms render");
+  await check("document.querySelectorAll('.term-row').length === state.currentSet.cards.length", "set terms render");
   await check("getComputedStyle(document.querySelector('.set-hero')).borderRadius === '16px' && getComputedStyle(document.querySelector('.mode-grid')).borderRadius === '16px'", "uniform set-detail radius");
   await check(noHorizontalOverflow, "set detail fits 320px viewport");
   await evaluate("document.querySelector('[data-mode=\"flashcards\"]').click()");
@@ -148,6 +148,13 @@ try {
   await evaluate("document.querySelector('[data-nav=\"admin\"]').click()");
   await waitFor("!document.querySelector('#admin-view').hidden", "admin studio");
   await check("document.querySelectorAll('.admin-card-row').length > 0", "admin cards editable");
+  await check("document.querySelector('.admin-image') && document.querySelector('.admin-image-fit')", "admin image controls available");
+  await evaluate(`(() => { const row = document.querySelector('.admin-card-row'); row.querySelector('.admin-image').value = location.origin + '/assets/icon.svg'; row.querySelector('.admin-image-fit').value = 'cover'; const saved = serializeStudySet(collectAdminSet()); window.__imageCard = parseStudySet(saved, 'image-test').cards[0]; })()`);
+  await check("window.__imageCard.image.endsWith('/assets/icon.svg') && window.__imageCard.imageFit === 'cover'", "image URL and crop mode survive SQL export");
+  await evaluate("state.study = { mode: 'flashcards', index: 0, cards: [window.__imageCard], correct: 0, incorrect: 0, answered: false, transitioning: false }; renderFlashcards()");
+  await check("document.querySelector('.flashcard-image') && getComputedStyle(document.querySelector('.flashcard-image')).objectFit === 'cover'", "URL image renders cropped on flashcard");
+  await evaluate("state.currentSet = { id: 'image-test', cards: [window.__imageCard, { term: 'Jiný organismus', definition: 'Jiná definice', image: '', imageFit: 'contain' }] }; state.study = { mode: 'quiz', index: 0, cards: [window.__imageCard], correct: 0, incorrect: 0, answered: false }; renderQuiz()");
+  await check("document.querySelector('.quiz-question .prompt-image') && [...document.querySelectorAll('.answer-option')].some((option) => option.textContent === window.__imageCard.term)", "image identification works in quiz mode");
   await check("document.querySelector('#admin-download-index') !== null", "admin export controls available");
   await check(noHorizontalOverflow, "admin fits 320px viewport");
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");

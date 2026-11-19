@@ -1,4 +1,4 @@
-const CACHE = "kpz-v9-subject-home";
+const CACHE = "kpz-v10-image-cards";
 const CORE = [
   "./",
   "./index.html",
@@ -8,9 +8,6 @@ const CORE = [
   "./manifest.webmanifest",
   "./data/config.json",
   "./data/sets/index.json",
-  "./data/sets/biology-cell.sql",
-  "./data/sets/english-travel.sql",
-  "./data/sets/history-industrial.sql",
   "./worksheets/index.json"
 ];
 

@@ -40,12 +40,14 @@ Copy one of the files in `data/sets/`, or make a new `.sql` file using this stru
 -- description: The essential vocabulary for this chapter.
 -- color: violet
 
-INSERT INTO cards (term, definition, hint, image) VALUES
-  ('Atom', 'The smallest particle of an element.', NULL, NULL),
-  ('Element', 'A pure substance made from one type of atom.', NULL, NULL);
+INSERT INTO cards (term, definition, hint, image, image_fit) VALUES
+  ('Atom', 'The smallest particle of an element.', NULL, NULL, NULL),
+  ('European robin', 'A small songbird with an orange breast.', NULL, 'https://example.org/robin.jpg', 'cover');
 ```
 
-Allowed colours are `violet`, `coral`, `mint`, `blue` and `yellow`. Escape an apostrophe inside a value by doubling it: `('student''s', 'belonging to a student', NULL, NULL)`.
+Allowed colours are `violet`, `coral`, `mint`, `blue` and `yellow`. Escape an apostrophe inside a value by doubling it: `('student''s', 'belonging to a student', NULL, NULL, NULL)`.
+
+The `image` value is optional and accepts an HTTPS image URL. Use `contain` for `image_fit` to show the complete image, or `cover` to fill the available card area and crop the edges from the centre. Image cards show the photo as the question and the term plus definition as the answer. The same photo is also used in learning, quiz and memory modes. Remote images depend on their original host remaining available and allowing direct image links.
 
 Add the file to `data/sets/index.json`:
 

@@ -257,6 +257,13 @@ function setStudyProgress(current, total) {
 function renderFlashcards() {
   const { cards, index } = state.study;
   const card = cards[index];
+  const image = cardImageMarkup(card, "flashcard-image");
+  const front = image
+    ? `<span class="flashcard-face front image-front"><small>Urči organismus</small>${image}<span>Klikni nebo klepni pro otočení</span></span>`
+    : `<span class="flashcard-face front"><small>Pojem</small><strong>${escapeHtml(card.term)}</strong><span>Klikni nebo klepni pro otočení</span></span>`;
+  const back = image
+    ? `<span class="flashcard-face back image-answer"><small>Odpověď</small><strong>${escapeHtml(card.term)}</strong><p>${escapeHtml(card.definition)}</p><span>Klikni nebo klepni pro návrat</span></span>`
+    : `<span class="flashcard-face back"><small>Definice</small><strong>${escapeHtml(card.definition)}</strong><span>Klikni nebo klepni pro návrat</span></span>`;
   setStudyProgress(index + 1, cards.length);
   $("#study-stage").innerHTML = `
     <div class="flashcard-score" aria-live="polite">
@@ -268,8 +275,8 @@ function renderFlashcards() {
       <span class="swipe-stamp right">UMÍM</span>
       <button class="flashcard" id="active-flashcard" type="button" aria-label="Otočit kartičku. Přejeď vlevo pro znovu nebo vpravo pro umím.">
         <span class="flashcard-inner">
-          <span class="flashcard-face front"><small>Pojem</small><strong>${escapeHtml(card.term)}</strong><span>Klikni nebo klepni pro otočení</span></span>
-          <span class="flashcard-face back"><small>Definice</small><strong>${escapeHtml(card.definition)}</strong><span>Klikni nebo klepni pro návrat</span></span>
+          ${front}
+          ${back}
         </span>
       </button>
     </div>
@@ -377,11 +384,12 @@ function renderLearn() {
   const { cards, index } = state.study;
   if (index >= cards.length) return renderResults("Kolo učení je hotové", state.study.correct, cards.length);
   const card = cards[index];
+  const image = cardImageMarkup(card, "prompt-image");
   setStudyProgress(index + 1, cards.length);
   $("#study-stage").innerHTML = `
     <div class="learn-prompt">
-      <span class="question-label">Napiš odpovídající pojem</span>
-      <h2>${escapeHtml(card.definition)}</h2>
+      <span class="question-label">${image ? "Napiš název organismu" : "Napiš odpovídající pojem"}</span>
+      ${image || `<h2>${escapeHtml(card.definition)}</h2>`}
       <form id="learn-form">
         <input class="learn-answer" id="learn-input" autocomplete="off" placeholder="Napiš odpověď" aria-label="Tvoje odpověď" required />
         <button class="button button-primary button-wide" type="submit">Zkontrolovat</button>
@@ -416,16 +424,18 @@ function renderQuiz() {
   const { index } = state.study;
   if (index >= limit) return renderResults("Kvíz je hotový", state.study.correct, limit);
   const card = state.study.cards[index];
-  const distractors = shuffle(state.currentSet.cards.filter((item) => item.term !== card.term)).slice(0, 3).map((item) => item.definition);
-  const answers = shuffle([card.definition, ...distractors]);
+  const image = cardImageMarkup(card, "prompt-image");
+  const correctAnswer = image ? card.term : card.definition;
+  const distractors = shuffle(state.currentSet.cards.filter((item) => item.term !== card.term)).slice(0, 3).map((item) => image ? item.term : item.definition);
+  const answers = shuffle([correctAnswer, ...distractors]);
   setStudyProgress(index + 1, limit);
   $("#study-stage").innerHTML = `
     <div class="quiz-question">
-      <span class="question-label eyebrow">Vyber správnou definici</span>
-      <h2>${escapeHtml(card.term)}</h2>
+      <span class="question-label eyebrow">${image ? "Vyber správný název" : "Vyber správnou definici"}</span>
+      ${image || `<h2>${escapeHtml(card.term)}</h2>`}
       <div class="answer-list">${answers.map((answer) => `<button class="answer-option" type="button" data-answer="${escapeAttribute(answer)}">${escapeHtml(answer)}</button>`).join("")}</div>
     </div>`;
-  $$(".answer-option").forEach((button) => button.addEventListener("click", () => answerQuiz(button, card.definition, limit)));
+  $$(".answer-option").forEach((button) => button.addEventListener("click", () => answerQuiz(button, correctAnswer, limit)));
 }
 
 function answerQuiz(button, correctAnswer, limit) {
@@ -452,13 +462,16 @@ function answerQuiz(button, correctAnswer, limit) {
 
 function renderMemory() {
   const pairs = shuffle([...state.currentSet.cards]).slice(0, Math.min(6, state.currentSet.cards.length));
-  const deck = shuffle(pairs.flatMap((card, index) => [
+  const deck = shuffle(pairs.flatMap((card, index) => getCardImageSource(card) ? [
+    { pair: index, image: card.image, imageFit: card.imageFit, kind: "image" },
+    { pair: index, text: card.term, kind: "term" },
+  ] : [
     { pair: index, text: card.term, kind: "term" },
     { pair: index, text: card.definition, kind: "definition" },
   ])).map((card, index) => ({ ...card, id: index }));
   state.study.memory = { deck, open: [], matched: new Set(), moves: 0, seconds: 0, locked: false };
   setStudyProgress(0, pairs.length);
-  $("#study-stage").innerHTML = `<div class="memory-meta"><span id="memory-moves">0 tahů</span><span id="memory-time">0:00</span></div><div class="memory-grid">${deck.map((card) => `<button class="memory-card" type="button" data-id="${card.id}">${escapeHtml(card.text)}</button>`).join("")}</div>`;
+  $("#study-stage").innerHTML = `<div class="memory-meta"><span id="memory-moves">0 tahů</span><span id="memory-time">0:00</span></div><div class="memory-grid">${deck.map((card) => `<button class="memory-card" type="button" data-id="${card.id}">${card.image ? cardImageMarkup(card, "memory-image") : escapeHtml(card.text)}</button>`).join("")}</div>`;
   $$(".memory-card").forEach((button) => button.addEventListener("click", () => flipMemoryCard(Number(button.dataset.id))));
   state.memoryTimer = setInterval(() => {
     state.study.memory.seconds += 1;
@@ -548,14 +561,24 @@ function populateAdminEditor(id) {
   $("#admin-color").value = set.color;
   $("#admin-filename").value = set.file;
   $("#admin-card-list").innerHTML = "";
-  set.cards.forEach((card) => addAdminCard(card.term, card.definition));
+  set.cards.forEach((card) => addAdminCard(card.term, card.definition, card.image, card.imageFit));
   $("#admin-status").textContent = set.isDraft ? "Zobrazuje se místní koncept." : "";
 }
 
-function addAdminCard(term = "", definition = "") {
+function addAdminCard(term = "", definition = "", image = "", imageFit = "contain") {
   const row = document.createElement("div");
   row.className = "admin-card-row";
-  row.innerHTML = `<input class="admin-term" type="text" value="${escapeAttribute(term)}" placeholder="Pojem" aria-label="Pojem" /><input class="admin-definition" type="text" value="${escapeAttribute(definition)}" placeholder="Definice" aria-label="Definice" /><button class="remove-card" type="button" aria-label="Odstranit kartičku">×</button>`;
+  row.innerHTML = `
+    <input class="admin-term" type="text" value="${escapeAttribute(term)}" placeholder="Pojem nebo název organismu" aria-label="Pojem nebo název organismu" />
+    <input class="admin-definition" type="text" value="${escapeAttribute(definition)}" placeholder="Definice nebo poznámka" aria-label="Definice nebo poznámka" />
+    <button class="remove-card" type="button" aria-label="Odstranit kartičku">×</button>
+    <div class="admin-image-options">
+      <input class="admin-image" type="url" value="${escapeAttribute(image)}" placeholder="https://… (volitelný obrázek)" aria-label="URL obrázku" />
+      <select class="admin-image-fit" aria-label="Způsob zobrazení obrázku">
+        <option value="contain"${imageFit !== "cover" ? " selected" : ""}>Zobrazit celý</option>
+        <option value="cover"${imageFit === "cover" ? " selected" : ""}>Oříznout do plochy</option>
+      </select>
+    </div>`;
   $(".remove-card", row).addEventListener("click", () => row.remove());
   $("#admin-card-list").append(row);
   if (!term) $(".admin-term", row).focus();
@@ -575,6 +598,8 @@ function collectAdminSet() {
     cards: $$(".admin-card-row").map((row) => ({
       term: $(".admin-term", row).value.trim(),
       definition: $(".admin-definition", row).value.trim(),
+      image: $(".admin-image", row).value.trim(),
+      imageFit: $(".admin-image-fit", row).value === "cover" ? "cover" : "contain",
     })).filter((card) => card.term && card.definition),
     isDraft: true,
   };
@@ -647,7 +672,7 @@ function parseStudySet(sql, fallbackId) {
   const valuesIndex = sql.search(/\bVALUES\b/i);
   const tuples = valuesIndex < 0 ? [] : parseSqlTuples(sql.slice(valuesIndex + 6));
   const cards = tuples
-    .map((values) => ({ term: values[0] || "", definition: values[1] || "", hint: values[2] || "", image: values[3] || "" }))
+    .map((values) => ({ term: values[0] || "", definition: values[1] || "", hint: values[2] || "", image: values[3] || "", imageFit: values[4] === "cover" ? "cover" : "contain" }))
     .filter((card) => card.term && card.definition);
   return {
     id: metadata.id || fallbackId,
@@ -698,11 +723,13 @@ function serializeStudySet(set) {
     `-- description: ${set.description}`,
     `-- color: ${set.color}`,
     "",
-    "INSERT INTO cards (term, definition, hint, image) VALUES",
+    "INSERT INTO cards (term, definition, hint, image, image_fit) VALUES",
   ];
   set.cards.forEach((card, index) => {
     const end = index === set.cards.length - 1 ? ";" : ",";
-    lines.push(`  ('${sqlEscape(card.term)}', '${sqlEscape(card.definition)}', NULL, NULL)${end}`);
+    const image = card.image ? `'${sqlEscape(card.image)}'` : "NULL";
+    const imageFit = card.image ? `'${card.imageFit === "cover" ? "cover" : "contain"}'` : "NULL";
+    lines.push(`  ('${sqlEscape(card.term)}', '${sqlEscape(card.definition)}', NULL, ${image}, ${imageFit})${end}`);
   });
   return `${lines.join("\n")}\n`;
 }
@@ -745,3 +772,22 @@ function slugify(value) { return String(value).toLowerCase().normalize("NFD").re
 function sanitizeFilename(value) { const base = String(value).trim().replace(/[^a-zA-Z0-9._-]/g, "-"); return base.toLowerCase().endsWith(".sql") ? base : `${base}.sql`; }
 function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char])); }
 function escapeAttribute(value) { return escapeHtml(value).replace(/'/g, "&#39;"); }
+
+function getCardImageSource(card) {
+  const source = String(card?.image || "").trim();
+  if (!source) return "";
+  try {
+    const url = new URL(source, document.baseURI);
+    if (url.origin !== window.location.origin && url.protocol !== "https:") return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
+function cardImageMarkup(card, className = "") {
+  const source = getCardImageSource(card);
+  if (!source) return "";
+  const fit = card.imageFit === "cover" ? "cover" : "contain";
+  return `<img class="study-card-image image-fit-${fit} ${escapeAttribute(className)}" src="${escapeAttribute(source)}" alt="" loading="eager" decoding="async" referrerpolicy="no-referrer" />`;
+}

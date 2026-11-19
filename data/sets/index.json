@@ -1,5 +1,5 @@
 {
   "sets": [
-    { "id": "pojmy_svp", "file": "pojmy_svp_bio.sql" },
+    { "id": "biology-basics", "file": "pojmy_svp_bio.sql" }
   ]
 }
