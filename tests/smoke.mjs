@@ -119,10 +119,15 @@ try {
   await evaluate("document.querySelector('[data-nav=\"map\"]').click()");
   await waitFor("document.querySelector('#blind-map').dataset.ready === 'true'", "blind map data");
   await check("[...document.querySelectorAll('#map-land-layer path')].some((path) => path.getAttribute('d').length > 1000) && document.querySelectorAll('#map-category option').length === 14", "Natural Earth map and assignment categories load");
+  await check("fetch('data/maps/world-assignment.json').then((response) => response.json()).then((data) => data.items.filter((item) => item.category === 'rivers').every((item) => item.target.type === 'line' && item.target.coordinates.length >= 3))", "rivers use line corridors");
   await check("!document.querySelector('#map-editor-toggle').hidden", "map editor is available to admin");
   await check(noHorizontalOverflow, "blind map fits 320px viewport");
   await evaluate("document.querySelector('#map-start').click()");
   await waitFor("!document.querySelector('#map-question').hidden", "blind map round starts");
+  await evaluate("document.querySelector('#map-skip').click()");
+  await waitFor("!document.querySelector('#map-feedback').hidden && document.querySelector('#map-feedback-title').textContent === 'Tady to je'", "Nevim reveals the target");
+  await evaluate("document.querySelector('#map-next').click()");
+  await waitFor("document.querySelector('#map-feedback').hidden && !document.querySelector('#map-skip').disabled", "blind map continues after Nevim");
   await evaluate(`(() => { const map = document.querySelector('#blind-map'); const rect = map.getBoundingClientRect(); const options = { bubbles: true, pointerId: 9, pointerType: 'mouse', button: 0, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }; map.dispatchEvent(new PointerEvent('pointerdown', options)); map.dispatchEvent(new PointerEvent('pointerup', options)); })()`);
   await waitFor("!document.querySelector('#map-feedback').hidden && document.querySelector('#map-target-layer').children.length > 0", "blind map answer reveals target");
   await evaluate("document.querySelector('#map-editor-toggle').click()");

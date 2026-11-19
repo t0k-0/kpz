@@ -3,7 +3,9 @@
 
   const WIDTH = 1000;
   const HEIGHT = 500;
-  const DRAFT_KEY = "kpz:blind-map-draft";
+  const DRAFT_KEY = "kpz:blind-map-draft-v2";
+  const DETAILED_LAND_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/693f11422f4e08d2da4566b854dda53eb7c39fb3/geojson/ne_50m_land.geojson";
+  const ANSWER_BUFFER_KM = { point: 120, line: 120, polygon: 90 };
   const SVG_NS = "http://www.w3.org/2000/svg";
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -49,7 +51,7 @@
     if (mapState.loadPromise) return mapState.loadPromise;
     mapState.loadPromise = Promise.all([
       fetch("data/maps/world-assignment.json", { cache: "no-store" }).then(checkResponse).then((response) => response.json()),
-      fetch("data/maps/ne_110m_land.geojson", { cache: "force-cache" }).then(checkResponse).then((response) => response.json()),
+      loadDetailedLand(),
     ]).then(([assignment, land]) => {
       mapState.sourceData = clone(assignment);
       mapState.data = readDraft() || clone(assignment);
@@ -67,6 +69,15 @@
     return mapState.loadPromise;
   }
 
+  async function loadDetailedLand() {
+    try {
+      return await fetch(DETAILED_LAND_URL, { cache: "force-cache" }).then(checkResponse).then((response) => response.json());
+    } catch (error) {
+      console.warn("Detailed coastline unavailable; using the bundled map.", error);
+      return fetch("data/maps/ne_110m_land.geojson", { cache: "force-cache" }).then(checkResponse).then((response) => response.json());
+    }
+  }
+
   function checkResponse(response) {
     if (!response.ok) throw new Error(`Map data request failed: ${response.url}`);
     return response;
@@ -74,7 +85,7 @@
 
   function bindControls() {
     q("#map-start").addEventListener("click", () => startRound());
-    q("#map-skip").addEventListener("click", () => submitMapAnswer(null));
+    q("#map-skip").addEventListener("click", handleSkip);
     q("#map-next").addEventListener("click", nextQuestion);
     q("#map-new-round").addEventListener("click", resetTrainer);
     q("#map-retry-errors").addEventListener("click", retryErrors);
@@ -156,6 +167,17 @@
     q("#map-results").hidden = true;
     q("#map-question").hidden = false;
     askQuestion();
+  }
+
+  function handleSkip(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (mapState.trainerStatus !== "asking") return;
+    submitMapAnswer(null);
+    requestAnimationFrame(() => {
+      q("#map-feedback").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      q("#map-next").focus({ preventScroll: true });
+    });
   }
 
   function filteredItems() {
@@ -375,9 +397,10 @@
 
   function targetContains(target, coordinate) {
     if (!target) return false;
-    if (target.type === "point") return haversineKm(coordinate, target.coordinates) <= Number(target.radiusKm || 200);
+    const toleranceKm = Number(target.radiusKm || (target.type === "line" ? 120 : 200)) + (ANSWER_BUFFER_KM[target.type] || 0);
+    if (target.type === "point") return haversineKm(coordinate, target.coordinates) <= toleranceKm;
     if (target.type === "polygon" && pointInPolygon(coordinate, target.coordinates)) return true;
-    return distanceToPolylineKm(coordinate, target.coordinates, target.type === "polygon") <= Number(target.radiusKm || 120);
+    return distanceToPolylineKm(coordinate, target.coordinates, target.type === "polygon") <= toleranceKm;
   }
 
   function haversineKm([lon1, lat1], [lon2, lat2]) {

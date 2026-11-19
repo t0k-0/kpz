@@ -53,6 +53,10 @@ for (const item of mapAssignment.items) {
   }
   if (!Number.isFinite(target.radiusKm) || target.radiusKm < 0) throw new Error(`Map item ${item.id} has invalid tolerance.`);
 }
+const riverItems = mapAssignment.items.filter((item) => item.category === "rivers");
+if (!riverItems.length || riverItems.some((item) => item.target?.type !== "line" || item.target.coordinates.length < 3)) {
+  throw new Error("Every river must use an approximate line target with at least three points.");
+}
 
 const ids = new Set();
 for (const entry of setIndex.sets) {
