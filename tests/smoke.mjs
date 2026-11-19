@@ -103,6 +103,8 @@ try {
   await check("document.querySelector('.streak-card') === null", "streak removed");
   await check("document.querySelector('#auth-form button[type=\"submit\"]').textContent === 'Vstoupit do KPZ'", "Czech login interface");
   await check("!document.querySelector('#auth-screen').hidden", "password gate shown");
+  await check("getComputedStyle(document.querySelector('#auth-screen')).backgroundImage === 'none'", "login has no gradient");
+  await check("getComputedStyle(document.querySelector('.auth-card')).borderRadius === '16px'", "shared surface radius");
   await check(noHorizontalOverflow, "login fits 320px viewport");
   await evaluate(`document.querySelector('#access-code').value='kpz-admin'; document.querySelector('#auth-form').requestSubmit()`);
   await waitFor("!document.querySelector('#app-shell').hidden", "admin login");
@@ -110,16 +112,19 @@ try {
   await check("document.querySelector('#role-pill').textContent === 'Správce'", "admin access");
   await check("document.querySelectorAll('.set-card').length === 3", "three study sets load");
   await check("document.querySelector('.set-card h3').textContent === 'Buňka a její části'", "Czech study content");
+  await check("getComputedStyle(document.querySelector('.set-card-main')).borderRadius === '16px' && getComputedStyle(document.querySelector('#continue-panel')).backgroundImage === 'none'", "flat dashboard surfaces");
   await check(noHorizontalOverflow, "dashboard fits 320px viewport");
 
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
   await check("document.querySelectorAll('.term-row').length === 10", "set terms render");
+  await check("getComputedStyle(document.querySelector('.set-hero')).borderRadius === '16px' && getComputedStyle(document.querySelector('.mode-card')).borderRadius === '16px'", "uniform set-detail radius");
   await check(noHorizontalOverflow, "set detail fits 320px viewport");
   await evaluate("document.querySelector('[data-mode=\"flashcards\"]').click()");
   await waitFor("document.querySelector('#active-flashcard') !== null", "flashcard mode");
   await evaluate("document.querySelector('#active-flashcard').click()");
   await check("document.querySelector('#active-flashcard').classList.contains('flipped')", "flashcard flips");
+  await check("getComputedStyle(document.querySelector('.flashcard-face.back')).backgroundImage === 'none' && getComputedStyle(document.querySelector('.flashcard-face')).borderRadius === '16px'", "flat flashcard surfaces");
   await check(noHorizontalOverflow, "flashcards fit 320px viewport");
   await evaluate("document.querySelector('#card-right').click()");
   await waitFor("document.querySelector('#flash-right-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('2 /')", "flashcard right grading");

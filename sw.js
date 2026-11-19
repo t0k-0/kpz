@@ -1,4 +1,4 @@
-const CACHE = "kpz-v6-mobile-text-fit";
+const CACHE = "kpz-v7-flat-uniform-radius";
 const CORE = [
   "./",
   "./index.html",
