@@ -1,7 +1,5 @@
 {
   "sets": [
-    { "id": "biology-cell", "file": "biology-cell.sql" },
-    { "id": "english-travel", "file": "english-travel.sql" },
-    { "id": "history-industrial", "file": "history-industrial.sql" }
+    { "id": "pojmy_svp", "file": "pojmy_svp_bio.sql" },
   ]
 }
