@@ -1,4 +1,4 @@
-const CACHE = "kpz-v5-second-student-code";
+const CACHE = "kpz-v6-mobile-text-fit";
 const CORE = [
   "./",
   "./index.html",

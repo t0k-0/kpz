@@ -94,26 +94,33 @@ try {
   };
 
   await send("Runtime.enable");
+  await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: true });
+  await pause(150);
+  const noHorizontalOverflow = "document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1";
   await waitFor("document.readyState === 'complete' && document.querySelector('#auth-form') !== null", "application boot");
   await check("document.title.includes('KPZ')", "page title");
   await check("getComputedStyle(document.documentElement).colorScheme === 'dark'", "dark theme is default");
   await check("document.querySelector('.streak-card') === null", "streak removed");
   await check("document.querySelector('#auth-form button[type=\"submit\"]').textContent === 'Vstoupit do KPZ'", "Czech login interface");
   await check("!document.querySelector('#auth-screen').hidden", "password gate shown");
+  await check(noHorizontalOverflow, "login fits 320px viewport");
   await evaluate(`document.querySelector('#access-code').value='kpz-admin'; document.querySelector('#auth-form').requestSubmit()`);
   await waitFor("!document.querySelector('#app-shell').hidden", "admin login");
   await check("document.documentElement.lang === 'cs'", "Czech document language");
   await check("document.querySelector('#role-pill').textContent === 'Správce'", "admin access");
   await check("document.querySelectorAll('.set-card').length === 3", "three study sets load");
   await check("document.querySelector('.set-card h3').textContent === 'Buňka a její části'", "Czech study content");
+  await check(noHorizontalOverflow, "dashboard fits 320px viewport");
 
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
   await check("document.querySelectorAll('.term-row').length === 10", "set terms render");
+  await check(noHorizontalOverflow, "set detail fits 320px viewport");
   await evaluate("document.querySelector('[data-mode=\"flashcards\"]').click()");
   await waitFor("document.querySelector('#active-flashcard') !== null", "flashcard mode");
   await evaluate("document.querySelector('#active-flashcard').click()");
   await check("document.querySelector('#active-flashcard').classList.contains('flipped')", "flashcard flips");
+  await check(noHorizontalOverflow, "flashcards fit 320px viewport");
   await evaluate("document.querySelector('#card-right').click()");
   await waitFor("document.querySelector('#flash-right-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('2 /')", "flashcard right grading");
   await evaluate(`(() => { const card = document.querySelector('#active-flashcard'); const options = { bubbles: true, pointerId: 8, pointerType: 'touch', clientY: 100, isPrimary: true }; card.dispatchEvent(new PointerEvent('pointerdown', { ...options, clientX: 200 })); card.dispatchEvent(new PointerEvent('pointermove', { ...options, clientX: 100 })); card.dispatchEvent(new PointerEvent('pointerup', { ...options, clientX: 100 })); })()`);
@@ -128,10 +135,12 @@ try {
 
   await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-nav=\"worksheets\"]').click()");
   await check("document.querySelectorAll('.worksheet-card').length === 2", "worksheet gallery loads");
+  await check(noHorizontalOverflow, "worksheets fit 320px viewport");
   await evaluate("document.querySelector('[data-nav=\"admin\"]').click()");
   await waitFor("!document.querySelector('#admin-view').hidden", "admin studio");
   await check("document.querySelectorAll('.admin-card-row').length > 0", "admin cards editable");
   await check("document.querySelector('#admin-download-index') !== null", "admin export controls available");
+  await check(noHorizontalOverflow, "admin fits 320px viewport");
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");
   await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "student login");
   await check("document.querySelector('#admin-nav').hidden", "admin tools hidden from students");
