@@ -1,6 +1,6 @@
 # KPZ
 
-KPZ is a phone-first study web app for a class. A single SQL-like study-set file powers four modes: flashcards, typed learning, multiple-choice quizzes and a memory matching game. It also includes a worksheet gallery and a browser-based admin content editor.
+KPZ is a dark, phone-first study web app for a group of friends. A single SQL-like study-set file powers four modes: swipeable flashcards with right/wrong grading, typed learning, multiple-choice quizzes and a memory matching game. It also includes a worksheet gallery and a browser-based admin content editor.
 
 ## Run locally
 

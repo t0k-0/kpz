@@ -1,4 +1,4 @@
-const CACHE = "kpz-v1";
+const CACHE = "kpz-v2-dark-swipe";
 const CORE = [
   "./",
   "./index.html",

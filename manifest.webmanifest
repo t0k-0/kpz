@@ -4,8 +4,8 @@
   "description": "Mobile study sets, quizzes, memory practice and class worksheets.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f7f7fb",
-  "theme_color": "#101426",
+  "background_color": "#0e0d13",
+  "theme_color": "#0e0d13",
   "icons": [
     { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

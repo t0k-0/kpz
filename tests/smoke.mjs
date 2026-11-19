@@ -96,6 +96,8 @@ try {
   await send("Runtime.enable");
   await waitFor("document.readyState === 'complete' && document.querySelector('#auth-form') !== null", "application boot");
   await check("document.title.includes('KPZ')", "page title");
+  await check("getComputedStyle(document.documentElement).colorScheme === 'dark'", "dark theme is default");
+  await check("document.querySelector('.streak-card') === null", "streak removed");
   await check("!document.querySelector('#auth-screen').hidden", "password gate shown");
   await evaluate(`document.querySelector('#access-code').value='kpz-admin'; document.querySelector('#auth-form').requestSubmit()`);
   await waitFor("!document.querySelector('#app-shell').hidden", "admin login");
@@ -109,6 +111,10 @@ try {
   await waitFor("document.querySelector('#active-flashcard') !== null", "flashcard mode");
   await evaluate("document.querySelector('#active-flashcard').click()");
   await check("document.querySelector('#active-flashcard').classList.contains('flipped')", "flashcard flips");
+  await evaluate("document.querySelector('#card-right').click()");
+  await waitFor("document.querySelector('#flash-right-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('2 /')", "flashcard right grading");
+  await evaluate(`(() => { const card = document.querySelector('#active-flashcard'); const options = { bubbles: true, pointerId: 8, pointerType: 'touch', clientY: 100, isPrimary: true }; card.dispatchEvent(new PointerEvent('pointerdown', { ...options, clientX: 200 })); card.dispatchEvent(new PointerEvent('pointermove', { ...options, clientX: 100 })); card.dispatchEvent(new PointerEvent('pointerup', { ...options, clientX: 100 })); })()`);
+  await waitFor("document.querySelector('#flash-wrong-count')?.textContent === '1'", "flashcard swipe grading");
   await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-mode=\"quiz\"]').click()");
   await waitFor("document.querySelector('.answer-option') !== null", "quiz mode");
   await evaluate("document.querySelector('.answer-option').click()");

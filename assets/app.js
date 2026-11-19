@@ -152,7 +152,6 @@ function showView(name) {
 function renderDashboard() {
   renderSetGrid();
   const activity = getActivity();
-  $("#streak-count").textContent = activity.streak || 0;
   const last = activity.lastSet && state.sets.find((set) => set.id === activity.lastSet);
   $("#continue-panel").hidden = !last;
   if (last) {
@@ -200,7 +199,7 @@ function resumeLastSet() {
 
 function startMode(mode) {
   if (!state.currentSet?.cards.length) return;
-  state.study = { mode, index: 0, cards: shuffle([...state.currentSet.cards]), correct: 0, answered: false };
+  state.study = { mode, index: 0, cards: shuffle([...state.currentSet.cards]), correct: 0, incorrect: 0, answered: false, transitioning: false };
   $$(".view").forEach((view) => { view.hidden = view.id !== "study-view"; });
   state.currentView = "study";
   $$(".nav-item").forEach((button) => button.classList.remove("active"));
@@ -232,27 +231,116 @@ function renderFlashcards() {
   const card = cards[index];
   setStudyProgress(index + 1, cards.length);
   $("#study-stage").innerHTML = `
-    <button class="flashcard" id="active-flashcard" type="button" aria-label="Flip card">
-      <span class="flashcard-inner">
-        <span class="flashcard-face front"><small>Term</small><strong>${escapeHtml(card.term)}</strong><span>Tap to reveal</span></span>
-        <span class="flashcard-face back"><small>Definition</small><strong>${escapeHtml(card.definition)}</strong><span>Tap to flip back</span></span>
-      </span>
-    </button>
+    <div class="flashcard-score" aria-live="polite">
+      <span class="score-wrong">Again <b id="flash-wrong-count">${state.study.incorrect}</b></span>
+      <span class="score-right">Got it <b id="flash-right-count">${state.study.correct}</b></span>
+    </div>
+    <div class="flashcard-wrap" id="flashcard-wrap">
+      <span class="swipe-stamp wrong">AGAIN</span>
+      <span class="swipe-stamp right">GOT IT</span>
+      <button class="flashcard" id="active-flashcard" type="button" aria-label="Flip card. Swipe left for again or right for got it.">
+        <span class="flashcard-inner">
+          <span class="flashcard-face front"><small>Term</small><strong>${escapeHtml(card.term)}</strong><span>Click or tap to reveal</span></span>
+          <span class="flashcard-face back"><small>Definition</small><strong>${escapeHtml(card.definition)}</strong><span>Click or tap to flip back</span></span>
+        </span>
+      </button>
+    </div>
     <div class="flashcard-controls">
-      <button class="button button-light" id="card-prev" type="button">Previous</button>
-      <button class="button button-primary" id="card-next" type="button">${index === cards.length - 1 ? "Finish" : "Next"}</button>
-    </div>`;
-  $("#active-flashcard").addEventListener("click", (event) => event.currentTarget.classList.toggle("flipped"));
-  $("#card-prev").addEventListener("click", () => {
-    state.study.index = (index - 1 + cards.length) % cards.length;
-    renderFlashcards();
+      <button class="button button-wrong" id="card-wrong" type="button">← Again</button>
+      <button class="button button-light" id="card-flip" type="button">Flip</button>
+      <button class="button button-right" id="card-right" type="button">Got it →</button>
+    </div>
+    <p class="flashcard-hint">Swipe on your phone · use ← and → on a keyboard</p>`;
+
+  const flashcard = $("#active-flashcard");
+  const wrap = $("#flashcard-wrap");
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragX = 0;
+  let dragging = false;
+  let pointerActive = false;
+  let suppressClick = false;
+
+  const flip = () => flashcard.classList.toggle("flipped");
+  const resetDrag = () => {
+    flashcard.classList.remove("dragging");
+    flashcard.style.transform = "";
+    wrap.classList.remove("drag-left", "drag-right");
+    dragging = false;
+    pointerActive = false;
+    dragX = 0;
+  };
+
+  flashcard.addEventListener("click", () => {
+    if (suppressClick) return;
+    flip();
   });
-  $("#card-next").addEventListener("click", () => {
-    if (index === cards.length - 1) return renderResults("Flashcards complete", cards.length, cards.length);
+  flashcard.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      gradeFlashcard(event.key === "ArrowRight");
+    }
+  });
+  flashcard.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+    dragX = 0;
+    dragging = false;
+    pointerActive = true;
+    try { flashcard.setPointerCapture(event.pointerId); } catch {}
+  });
+  flashcard.addEventListener("pointermove", (event) => {
+    if (!pointerActive) return;
+    const deltaX = event.clientX - dragStartX;
+    const deltaY = event.clientY - dragStartY;
+    if (Math.abs(deltaX) < 8 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    dragging = true;
+    dragX = deltaX;
+    flashcard.classList.add("dragging");
+    flashcard.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 28}deg)`;
+    wrap.classList.toggle("drag-left", deltaX < 0);
+    wrap.classList.toggle("drag-right", deltaX > 0);
+  });
+  flashcard.addEventListener("pointerup", (event) => {
+    pointerActive = false;
+    try { flashcard.releasePointerCapture(event.pointerId); } catch {}
+    if (!dragging) return;
+    suppressClick = true;
+    if (Math.abs(dragX) >= 70) gradeFlashcard(dragX > 0);
+    else resetDrag();
+    setTimeout(() => { suppressClick = false; }, 0);
+  });
+  flashcard.addEventListener("pointercancel", resetDrag);
+  $("#card-flip").addEventListener("click", flip);
+  $("#card-wrong").addEventListener("click", () => gradeFlashcard(false));
+  $("#card-right").addEventListener("click", () => gradeFlashcard(true));
+  flashcard.focus({ preventScroll: true });
+}
+
+function gradeFlashcard(gotIt) {
+  if (state.study.transitioning) return;
+  state.study.transitioning = true;
+  if (gotIt) state.study.correct += 1;
+  else state.study.incorrect += 1;
+  $("#flash-right-count").textContent = state.study.correct;
+  $("#flash-wrong-count").textContent = state.study.incorrect;
+  const flashcard = $("#active-flashcard");
+  flashcard.classList.add(gotIt ? "swipe-right" : "swipe-left");
+  setTimeout(() => {
+    if (state.study.index === state.study.cards.length - 1) {
+      return renderResults(
+        "Flashcards done",
+        state.study.correct,
+        state.study.cards.length,
+        `${state.study.correct} got it · ${state.study.incorrect} to try again`,
+      );
+    }
     state.study.index += 1;
-    recordActivity(state.currentSet.id, ((state.study.index + 1) / cards.length) * 100);
+    state.study.transitioning = false;
+    recordActivity(state.currentSet.id, ((state.study.index + 1) / state.study.cards.length) * 100);
     renderFlashcards();
-  });
+  }, 220);
 }
 
 function renderLearn() {
@@ -593,12 +681,6 @@ function sqlEscape(value) { return String(value).replaceAll("'", "''"); }
 
 function recordActivity(setId, progress) {
   const activity = getActivity();
-  const today = new Date().toISOString().slice(0, 10);
-  if (activity.lastDate !== today) {
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-    activity.streak = activity.lastDate === yesterday ? (activity.streak || 0) + 1 : 1;
-    activity.lastDate = today;
-  }
   activity.lastSet = setId;
   activity.progress ||= {};
   if (progress !== null) activity.progress[setId] = Math.round(progress);
