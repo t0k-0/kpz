@@ -1,7 +1,10 @@
 {
   "appName": "KPZ",
   "access": {
-    "studentHash": "7305076bd4d64d22c6af6b6999ce3d1d69476c65fb4f5c56744c93357fcaf717",
+    "studentHashes": [
+      "7305076bd4d64d22c6af6b6999ce3d1d69476c65fb4f5c56744c93357fcaf717",
+      "fb63787d95c41769ef5d731c2ddfd78e3258b898f4fa1ae80f5c92cc42d14d05"
+    ],
     "adminHash": "38fe62d89fc4a175c8fd15c138e9a8b353bc25a1c424a3ac2469ce0f4d42d909"
   }
 }

@@ -135,6 +135,9 @@ try {
   await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovanej'; document.querySelector('#auth-form').requestSubmit()");
   await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "student login");
   await check("document.querySelector('#admin-nav').hidden", "admin tools hidden from students");
+  await evaluate("document.querySelector('#logout-button').click(); document.querySelector('#access-code').value='vyzmizikovana'; document.querySelector('#auth-form').requestSubmit()");
+  await waitFor("!document.querySelector('#app-shell').hidden && document.querySelector('#role-pill').textContent === 'Student'", "second student code login");
+  await check("document.querySelector('#admin-nav').hidden", "second student code has student-only access");
   if (exceptions.length) throw new Error(`Browser exceptions: ${exceptions.join(", ")}`);
   console.log("KPZ browser smoke test passed.");
 } finally {

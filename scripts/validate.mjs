@@ -24,7 +24,8 @@ const setIndex = await readJson("data/sets/index.json");
 const worksheetIndex = await readJson("worksheets/index.json");
 await readJson("manifest.webmanifest");
 
-if (!/^[a-f0-9]{64}$/.test(config.access?.studentHash || "") || !/^[a-f0-9]{64}$/.test(config.access?.adminHash || "")) {
+const studentHashes = config.access?.studentHashes || [config.access?.studentHash].filter(Boolean);
+if (!studentHashes.length || studentHashes.some((hash) => !/^[a-f0-9]{64}$/.test(hash)) || !/^[a-f0-9]{64}$/.test(config.access?.adminHash || "")) {
   throw new Error("Access-code hashes must be 64-character SHA-256 values.");
 }
 if (!Array.isArray(setIndex.sets) || setIndex.sets.length === 0) throw new Error("At least one study set is required.");

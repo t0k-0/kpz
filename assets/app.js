@@ -94,7 +94,7 @@ async function handleLogin(event) {
   const hash = await sha256(input.value);
   let role = null;
   if (hash === state.config.access.adminHash) role = "admin";
-  else if (hash === state.config.access.studentHash) role = "student";
+  else if ((state.config.access.studentHashes || [state.config.access.studentHash]).includes(hash)) role = "student";
   if (!role) {
     $("#auth-error").textContent = "Tenhle kód nesedí. Zkontroluj ho a zkus to znovu.";
     input.select();

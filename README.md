@@ -14,7 +14,7 @@ Then open the local URL printed in the terminal.
 
 Default access codes:
 
-- Student: `vyzmizikovanej`
+- Student: `vyzmizikovanej` or `vyzmizikovana`
 - Admin: `kpz-admin`
 
 Change both before sharing the site. See “Access codes” below.
@@ -72,7 +72,7 @@ $hash = [Security.Cryptography.SHA256]::Create().ComputeHash($bytes)
 [BitConverter]::ToString($hash).Replace("-", "").ToLowerInvariant()
 ```
 
-Replace `studentHash` or `adminHash` in `data/config.json` with the result. For real user accounts, private files and direct online admin saving, use a server-backed platform such as Cloudflare Pages/Workers, Firebase or Supabase instead of GitHub Pages.
+Add or replace values in `studentHashes`, or replace `adminHash`, in `data/config.json` with the result. For real user accounts, private files and direct online admin saving, use a server-backed platform such as Cloudflare Pages/Workers, Firebase or Supabase instead of GitHub Pages.
 
 ## Publish on GitHub Pages
 
