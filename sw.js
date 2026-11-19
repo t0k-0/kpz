@@ -1,4 +1,4 @@
-const CACHE = "kpz-v13-memory-pairs";
+const CACHE = "kpz-v14-map-redeploy";
 const CORE = [
   "./",
   "./index.html",
