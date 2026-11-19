@@ -19,6 +19,7 @@ const state = {
   currentView: "dashboard",
   study: null,
   memoryTimer: null,
+  randomOrder: true,
 };
 
 document.addEventListener("DOMContentLoaded", init);
@@ -27,6 +28,8 @@ async function init() {
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Offline mode unavailable", error));
   }
+  state.randomOrder = getRandomOrderPreference();
+  $("#random-order").checked = state.randomOrder;
   bindGlobalEvents();
   try {
     const [config, setIndex, worksheetIndex] = await Promise.all([
@@ -80,6 +83,10 @@ function bindGlobalEvents() {
   $("#continue-button").addEventListener("click", resumeLastSet);
   $$('[data-action="dashboard"]').forEach((button) => button.addEventListener("click", () => showView("dashboard")));
   $$('[data-mode]').forEach((button) => button.addEventListener("click", () => startMode(button.dataset.mode)));
+  $("#random-order").addEventListener("change", (event) => {
+    state.randomOrder = event.currentTarget.checked;
+    try { localStorage.setItem("kpz:random-order", String(state.randomOrder)); } catch {}
+  });
   $("#study-close").addEventListener("click", closeStudy);
   $$("[data-nav]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.nav)));
   $("#admin-set-select").addEventListener("change", () => populateAdminEditor($("#admin-set-select").value));
@@ -216,6 +223,7 @@ function openSet(id) {
   hero.innerHTML = `<p class="eyebrow">${escapeHtml(set.subject)}</p><h1>${escapeHtml(set.title)}</h1><p>${escapeHtml(set.description)}</p>`;
   $("#term-count").textContent = czechCount(set.cards.length, "pojem", "pojmy", "pojmů");
   $("#term-list").innerHTML = set.cards.map((card) => `<div class="term-row"><strong>${escapeHtml(card.term)}</strong><span>${escapeHtml(card.definition)}</span></div>`).join("");
+  $("#random-order").checked = state.randomOrder;
   showView("set");
   recordActivity(set.id, null);
 }
@@ -227,7 +235,8 @@ function resumeLastSet() {
 
 function startMode(mode) {
   if (!state.currentSet?.cards.length) return;
-  state.study = { mode, index: 0, cards: shuffle([...state.currentSet.cards]), correct: 0, incorrect: 0, answered: false, transitioning: false };
+  const cards = state.randomOrder ? shuffle([...state.currentSet.cards]) : [...state.currentSet.cards];
+  state.study = { mode, index: 0, cards, correct: 0, incorrect: 0, answered: false, transitioning: false };
   $$(".view").forEach((view) => { view.hidden = view.id !== "study-view"; });
   state.currentView = "study";
   $$(".nav-item").forEach((button) => button.classList.remove("active"));
@@ -461,7 +470,7 @@ function answerQuiz(button, correctAnswer, limit) {
 }
 
 function renderMemory() {
-  const pairs = shuffle([...state.currentSet.cards]).slice(0, Math.min(6, state.currentSet.cards.length));
+  const pairs = state.study.cards.slice(0, Math.min(6, state.study.cards.length));
   const deck = shuffle(pairs.flatMap((card, index) => getCardImageSource(card) ? [
     { pair: index, image: card.image, imageFit: card.imageFit, kind: "image" },
     { pair: index, text: card.term, kind: "term" },
@@ -753,6 +762,11 @@ function recordActivity(setId, progress) {
 function getActivity() {
   try { return JSON.parse(localStorage.getItem("kpz:activity")) || {}; }
   catch { return {}; }
+}
+
+function getRandomOrderPreference() {
+  try { return localStorage.getItem("kpz:random-order") !== "false"; }
+  catch { return true; }
 }
 
 function shuffle(items) {

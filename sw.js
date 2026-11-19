@@ -1,4 +1,4 @@
-const CACHE = "kpz-v10-image-cards";
+const CACHE = "kpz-v11-random-queue";
 const CORE = [
   "./",
   "./index.html",

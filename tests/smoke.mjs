@@ -123,9 +123,11 @@ try {
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
   await check("document.querySelectorAll('.term-row').length === state.currentSet.cards.length", "set terms render");
   await check("getComputedStyle(document.querySelector('.set-hero')).borderRadius === '16px' && getComputedStyle(document.querySelector('.mode-grid')).borderRadius === '16px'", "uniform set-detail radius");
+  await check("document.querySelector('#random-order').checked && state.randomOrder", "random queue is enabled by default");
   await check(noHorizontalOverflow, "set detail fits 320px viewport");
-  await evaluate("document.querySelector('[data-mode=\"flashcards\"]').click()");
+  await evaluate("document.querySelector('#random-order').checked=false; document.querySelector('#random-order').dispatchEvent(new Event('change', { bubbles: true })); document.querySelector('[data-mode=\"flashcards\"]').click()");
   await waitFor("document.querySelector('#active-flashcard') !== null", "flashcard mode");
+  await check("state.study.cards.every((card, index) => card === state.currentSet.cards[index]) && localStorage.getItem('kpz:random-order') === 'false'", "switch disables queue shuffling and saves preference");
   await evaluate("document.querySelector('#active-flashcard').click()");
   await check("document.querySelector('#active-flashcard').classList.contains('flipped')", "flashcard flips");
   await check("getComputedStyle(document.querySelector('.flashcard-face.back')).backgroundImage === 'none' && getComputedStyle(document.querySelector('.flashcard-face')).borderRadius === '16px'", "flat flashcard surfaces");
@@ -134,7 +136,7 @@ try {
   await waitFor("document.querySelector('#flash-right-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('2 /')", "flashcard right grading");
   await evaluate(`(() => { const card = document.querySelector('#active-flashcard'); const options = { bubbles: true, pointerId: 8, pointerType: 'touch', clientY: 100, isPrimary: true }; card.dispatchEvent(new PointerEvent('pointerdown', { ...options, clientX: 200 })); card.dispatchEvent(new PointerEvent('pointermove', { ...options, clientX: 100 })); card.dispatchEvent(new PointerEvent('pointerup', { ...options, clientX: 100 })); })()`);
   await waitFor("document.querySelector('#flash-wrong-count')?.textContent === '1' && document.querySelector('#study-counter')?.textContent.startsWith('3 /')", "flashcard swipe grading");
-  await evaluate("document.querySelector('#study-close').click(); document.querySelector('[data-mode=\"quiz\"]').click()");
+  await evaluate("document.querySelector('#study-close').click(); document.querySelector('#random-order').checked=true; document.querySelector('#random-order').dispatchEvent(new Event('change', { bubbles: true })); document.querySelector('[data-mode=\"quiz\"]').click()");
   await waitFor("document.querySelector('.answer-option') !== null", "quiz mode");
   await evaluate("document.querySelector('.answer-option').click()");
   await check("document.querySelectorAll('.answer-option:disabled').length > 0", "quiz answer scores");

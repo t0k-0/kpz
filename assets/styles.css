@@ -112,6 +112,12 @@ h3 { margin-bottom: var(--s1); font-size: 1.45rem; line-height: 1.1; }
 .set-hero::after { display: none; }
 .set-hero h1 { max-width: 760px; margin-bottom: var(--s2); color: #fff; font-size: clamp(2.8rem, 7vw, 5.2rem); }
 .set-hero p:last-child { max-width: 620px; margin: 0; color: rgba(255,255,255,.82); }
+.queue-option { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s2); padding: var(--s3) 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.queue-option > span { min-width: 0; }
+.queue-option strong, .queue-option small { display: block; }
+.queue-option strong { font-family: "Newsreader", Georgia, serif; font-size: 1.2rem; }
+.queue-option small { margin-top: .2rem; color: var(--muted); font-size: .875rem; }
+.queue-option input { width: 22px; height: 22px; flex: 0 0 auto; margin: 0; accent-color: var(--accent); cursor: pointer; }
 .mode-grid { display: grid; grid-template-columns: repeat(4,1fr); margin-bottom: var(--s7); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
 .mode-card { min-height: 112px; padding: 1rem 1.15rem; border: 0; border-right: 1px solid var(--line); color: var(--ink); background: transparent; text-align: left; cursor: pointer; transition: background-color .16s ease; }
 .mode-card:last-child { border-right: 0; }
