@@ -2,11 +2,11 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const colorMap = {
-  violet: "#7558e8",
-  coral: "#ff785f",
-  mint: "#3ccca5",
-  blue: "#55a6ee",
-  yellow: "#e5a72c",
+  violet: "#b84f39",
+  coral: "#ca6248",
+  mint: "#4f836a",
+  blue: "#57756c",
+  yellow: "#80652f",
 };
 
 const state = {
@@ -38,6 +38,8 @@ async function init() {
     state.setIndex = setIndex.sets || [];
     state.worksheets = worksheetIndex.worksheets || [];
     await loadAllSets();
+    document.documentElement.dataset.kpzReady = "true";
+    $("#auth-submit").disabled = false;
     restoreSession();
   } catch (error) {
     console.error(error);
@@ -246,9 +248,9 @@ function renderFlashcards() {
       </button>
     </div>
     <div class="flashcard-controls">
-      <button class="button button-wrong" id="card-wrong" type="button">← Znovu</button>
+      <button class="button button-wrong" id="card-wrong" type="button">Znovu</button>
       <button class="button button-light" id="card-flip" type="button">Otočit</button>
-      <button class="button button-right" id="card-right" type="button">Umím →</button>
+      <button class="button button-right" id="card-right" type="button">Umím</button>
     </div>
     <p class="flashcard-hint">Na telefonu přejeď prstem · na klávesnici použij ← a →</p>`;
 

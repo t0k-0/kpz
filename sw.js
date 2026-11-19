@@ -1,4 +1,4 @@
-const CACHE = "kpz-v7-flat-uniform-radius";
+const CACHE = "kpz-v8-editorial-system";
 const CORE = [
   "./",
   "./index.html",

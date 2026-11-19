@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0e0d13" />
     <meta name="robots" content="noindex, nofollow, noarchive" />
-    <meta name="description" content="KPZ — společné místo pro kartičky, kvízy, pexeso a pracovní listy." />
-    <title>KPZ — Učíme se spolu</title>
+    <meta name="description" content="KPZ: společné místo pro kartičky, kvízy, pexeso a pracovní listy." />
+    <title>KPZ | Učíme se spolu</title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,600;6..72,700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="assets/app.js" defer></script>
   </head>
@@ -19,7 +22,6 @@
     <div id="auth-screen" class="auth-screen">
       <main class="auth-card">
         <div class="brand-mark brand-mark-large" aria-hidden="true">K</div>
-        <p class="eyebrow">Naše společná studijní skrýš</p>
         <h1>Učení.<br /><span>Bez stresu.</span></h1>
         <p class="auth-copy">Kartičky, kvízy, pexeso a pracovní listy, které pořád hledáme ve skupinovém chatu.</p>
         <form id="auth-form" class="auth-form">
@@ -28,7 +30,7 @@
             <input id="access-code" name="access-code" type="password" autocomplete="current-password" placeholder="Zadej kód" required />
             <button class="icon-button" id="toggle-password" type="button" aria-label="Zobrazit heslo">Ukázat</button>
           </div>
-          <button class="button button-primary button-wide" type="submit">Vstoupit do KPZ</button>
+          <button class="button button-primary button-wide" id="auth-submit" type="submit" disabled>Vstoupit do KPZ</button>
           <p id="auth-error" class="form-message" role="alert"></p>
         </form>
         <p class="auth-footnote">Administrátorský kód odemkne také úpravy obsahu.</p>
@@ -51,14 +53,13 @@
         <section id="dashboard-view" class="view dashboard-view">
           <div class="hero">
             <div>
-              <p class="eyebrow">Čau, jsi tu</p>
               <h1>Co si dneska<br /><span>nacpeme do hlavy?</span></h1>
+              <p class="hero-copy">Vyber sadu a začni. Nic dalšího není potřeba.</p>
             </div>
           </div>
 
           <section class="continue-panel" id="continue-panel" hidden>
             <div>
-              <p class="eyebrow">Pokračuj, kde jsi skončil</p>
               <h2 id="continue-title">Poslední sada</h2>
               <div class="progress-track"><span id="continue-progress"></span></div>
             </div>
@@ -67,11 +68,10 @@
 
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Naše materiály</p>
-              <h2>Vyber si sadu</h2>
+              <h2>Studijní sady</h2>
             </div>
             <label class="search-box">
-              <span aria-hidden="true">⌕</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
               <input id="set-search" type="search" placeholder="Hledat sady" aria-label="Hledat studijní sady" />
             </label>
           </div>
@@ -80,16 +80,16 @@
         </section>
 
         <section id="set-view" class="view" hidden>
-          <button class="back-button" data-action="dashboard" type="button">‹ Všechny sady</button>
+          <button class="back-button" data-action="dashboard" type="button">Všechny sady</button>
           <div id="set-hero" class="set-hero"></div>
           <div class="mode-grid">
-            <button class="mode-card mode-flashcards" data-mode="flashcards" type="button"><span class="mode-icon">▱</span><span><strong>Kartičky</strong><small>Projdi si celou sadu</small></span></button>
-            <button class="mode-card mode-learn" data-mode="learn" type="button"><span class="mode-icon">◎</span><span><strong>Učení</strong><small>Vybav si, zkontroluj, opakuj</small></span></button>
-            <button class="mode-card mode-quiz" data-mode="quiz" type="button"><span class="mode-icon">✓</span><span><strong>Kvíz</strong><small>Ověř si, co už umíš</small></span></button>
-            <button class="mode-card mode-memory" data-mode="memory" type="button"><span class="mode-icon">◫</span><span><strong>Pexeso</strong><small>Spojuj pojmy a významy</small></span></button>
+            <button class="mode-card mode-flashcards" data-mode="flashcards" type="button"><span><strong>Kartičky</strong><small>Projdi si celou sadu</small></span></button>
+            <button class="mode-card mode-learn" data-mode="learn" type="button"><span><strong>Učení</strong><small>Vybav si, zkontroluj, opakuj</small></span></button>
+            <button class="mode-card mode-quiz" data-mode="quiz" type="button"><span><strong>Kvíz</strong><small>Ověř si, co už umíš</small></span></button>
+            <button class="mode-card mode-memory" data-mode="memory" type="button"><span><strong>Pexeso</strong><small>Spojuj pojmy a významy</small></span></button>
           </div>
           <section class="term-preview">
-            <div class="section-heading compact"><div><p class="eyebrow">V této sadě</p><h2>Pojmy</h2></div><span id="term-count" class="count-label"></span></div>
+            <div class="section-heading compact"><div><h2>Pojmy</h2></div><span id="term-count" class="count-label"></span></div>
             <div id="term-list" class="term-list"></div>
           </section>
         </section>
@@ -104,14 +104,14 @@
         </section>
 
         <section id="worksheets-view" class="view" hidden>
-          <div class="page-heading"><p class="eyebrow">Společné materiály</p><h1>Pracovní listy</h1><p>Otevři nebo stáhni materiály, které právě používáme.</p></div>
+          <div class="page-heading"><h1>Pracovní listy</h1><p>Otevři nebo stáhni materiály, které právě používáme.</p></div>
           <div id="worksheet-filters" class="filter-row"></div>
           <div id="worksheet-grid" class="worksheet-grid"></div>
           <div id="empty-worksheets" class="empty-state" hidden>V této kategorii zatím nic není.</div>
         </section>
 
         <section id="admin-view" class="view" hidden>
-          <div class="page-heading"><p class="eyebrow">Administrace</p><h1>Správa obsahu</h1><p>Uprav sadu přímo v prohlížeči, hned si ji prohlédni a potom stáhni SQL soubor do repozitáře.</p></div>
+          <div class="page-heading"><h1>Správa obsahu</h1><p>Uprav sadu přímo v prohlížeči, hned si ji prohlédni a potom stáhni SQL soubor do repozitáře.</p></div>
           <div class="admin-notice"><strong>Jak to funguje</strong><span>Změny se uloží v tomto prohlížeči. Pro zveřejnění stáhni soubor a nahraď jím odpovídající soubor v repozitáři.</span></div>
           <div class="admin-layout">
             <aside class="admin-sidebar">
@@ -133,7 +133,7 @@
                 <label>Barva<select id="admin-color"><option value="violet">Fialová</option><option value="coral">Korálová</option><option value="mint">Mátová</option><option value="blue">Modrá</option><option value="yellow">Žlutá</option></select></label>
                 <label>Název souboru<input id="admin-filename" type="text" placeholder="moje-sada.sql" /></label>
               </div>
-              <div class="editor-toolbar"><div><p class="eyebrow">Kartičky</p><h2>Pojmy a definice</h2></div><button id="admin-add-card" class="button button-secondary" type="button">Přidat kartičku</button></div>
+              <div class="editor-toolbar"><div><h2>Pojmy a definice</h2></div><button id="admin-add-card" class="button button-secondary" type="button">Přidat kartičku</button></div>
               <div id="admin-card-list" class="admin-card-list"></div>
             </div>
           </div>
@@ -141,9 +141,9 @@
       </main>
 
       <nav class="bottom-nav" aria-label="Hlavní navigace">
-        <button class="nav-item active" data-nav="dashboard" type="button"><span>⌂</span><small>Domů</small></button>
-        <button class="nav-item" data-nav="worksheets" type="button"><span>▤</span><small>Listy</small></button>
-        <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><span>⚙</span><small>Správa</small></button>
+        <button class="nav-item active" data-nav="dashboard" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z"></path><path d="M9 20v-6h6v6"></path></svg><small>Domů</small></button>
+        <button class="nav-item" data-nav="worksheets" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><small>Listy</small></button>
+        <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg><small>Správa</small></button>
       </nav>
     </div>
 
@@ -151,7 +151,7 @@
       <article class="set-card">
         <button class="set-card-main" type="button">
           <span class="set-subject"></span><h3></h3><p></p>
-          <span class="set-card-foot"><span class="set-size"></span><span class="set-arrow">›</span></span>
+          <span class="set-card-foot"><span class="set-size"></span></span>
         </button>
       </article>
     </template>

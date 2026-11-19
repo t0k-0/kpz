@@ -97,8 +97,9 @@ try {
   await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: true });
   await pause(150);
   const noHorizontalOverflow = "document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1";
-  await waitFor("document.readyState === 'complete' && document.querySelector('#auth-form') !== null", "application boot");
+  await waitFor("document.readyState !== 'loading' && document.documentElement.dataset.kpzReady === 'true'", "application boot");
   await check("document.title.includes('KPZ')", "page title");
+  await waitFor("getComputedStyle(document.documentElement).colorScheme === 'dark'", "theme stylesheet");
   await check("getComputedStyle(document.documentElement).colorScheme === 'dark'", "dark theme is default");
   await check("document.querySelector('.streak-card') === null", "streak removed");
   await check("document.querySelector('#auth-form button[type=\"submit\"]').textContent === 'Vstoupit do KPZ'", "Czech login interface");
@@ -118,7 +119,7 @@ try {
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");
   await check("document.querySelectorAll('.term-row').length === 10", "set terms render");
-  await check("getComputedStyle(document.querySelector('.set-hero')).borderRadius === '16px' && getComputedStyle(document.querySelector('.mode-card')).borderRadius === '16px'", "uniform set-detail radius");
+  await check("getComputedStyle(document.querySelector('.set-hero')).borderRadius === '16px' && getComputedStyle(document.querySelector('.mode-grid')).borderRadius === '16px'", "uniform set-detail radius");
   await check(noHorizontalOverflow, "set detail fits 320px viewport");
   await evaluate("document.querySelector('[data-mode=\"flashcards\"]').click()");
   await waitFor("document.querySelector('#active-flashcard') !== null", "flashcard mode");
