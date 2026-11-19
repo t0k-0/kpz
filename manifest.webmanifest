@@ -1,7 +1,7 @@
 {
-  "name": "KPZ Study",
+  "name": "KPZ Učení",
   "short_name": "KPZ",
-  "description": "Mobile study sets, quizzes, memory practice and class worksheets.",
+  "description": "Mobilní studijní sady, kvízy, pexeso a společné pracovní listy.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0e0d13",

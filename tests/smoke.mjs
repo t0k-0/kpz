@@ -98,11 +98,14 @@ try {
   await check("document.title.includes('KPZ')", "page title");
   await check("getComputedStyle(document.documentElement).colorScheme === 'dark'", "dark theme is default");
   await check("document.querySelector('.streak-card') === null", "streak removed");
+  await check("document.querySelector('#auth-form button[type=\"submit\"]').textContent === 'Vstoupit do KPZ'", "Czech login interface");
   await check("!document.querySelector('#auth-screen').hidden", "password gate shown");
   await evaluate(`document.querySelector('#access-code').value='kpz-admin'; document.querySelector('#auth-form').requestSubmit()`);
   await waitFor("!document.querySelector('#app-shell').hidden", "admin login");
-  await check("document.querySelector('#role-pill').textContent === 'Admin'", "admin access");
+  await check("document.documentElement.lang === 'cs'", "Czech document language");
+  await check("document.querySelector('#role-pill').textContent === 'Správce'", "admin access");
   await check("document.querySelectorAll('.set-card').length === 3", "three study sets load");
+  await check("document.querySelector('.set-card h3').textContent === 'Buňka a její části'", "Czech study content");
 
   await evaluate("document.querySelector('.set-card button').click()");
   await waitFor("!document.querySelector('#set-view').hidden", "set detail");

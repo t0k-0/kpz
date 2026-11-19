@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="cs">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0e0d13" />
     <meta name="robots" content="noindex, nofollow, noarchive" />
-    <meta name="description" content="KPZ — one shared place for class flashcards, quizzes, memory practice and worksheets." />
-    <title>KPZ — Study together</title>
+    <meta name="description" content="KPZ — společné místo pro kartičky, kvízy, pexeso a pracovní listy." />
+    <title>KPZ — Učíme se spolu</title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="assets/styles.css" />
@@ -19,31 +19,31 @@
     <div id="auth-screen" class="auth-screen">
       <main class="auth-card">
         <div class="brand-mark brand-mark-large" aria-hidden="true">K</div>
-        <p class="eyebrow">The group study stash</p>
-        <h1>Study stuff.<br /><span>Without the fuss.</span></h1>
-        <p class="auth-copy">Cards, quizzes, memory games and the worksheets we keep losing in the group chat.</p>
+        <p class="eyebrow">Naše společná studijní skrýš</p>
+        <h1>Učení.<br /><span>Bez zbytečností.</span></h1>
+        <p class="auth-copy">Kartičky, kvízy, pexeso a pracovní listy, které pořád hledáme ve skupinovém chatu.</p>
         <form id="auth-form" class="auth-form">
-          <label for="access-code">Class access code</label>
+          <label for="access-code">Přístupový kód</label>
           <div class="password-row">
-            <input id="access-code" name="access-code" type="password" autocomplete="current-password" placeholder="Enter your code" required />
-            <button class="icon-button" id="toggle-password" type="button" aria-label="Show password">Show</button>
+            <input id="access-code" name="access-code" type="password" autocomplete="current-password" placeholder="Zadej kód" required />
+            <button class="icon-button" id="toggle-password" type="button" aria-label="Zobrazit heslo">Ukázat</button>
           </div>
-          <button class="button button-primary button-wide" type="submit">Enter KPZ</button>
+          <button class="button button-primary button-wide" type="submit">Vstoupit do KPZ</button>
           <p id="auth-error" class="form-message" role="alert"></p>
         </form>
-        <p class="auth-footnote">The admin code unlocks the editing bits too.</p>
+        <p class="auth-footnote">Administrátorský kód odemkne také úpravy obsahu.</p>
       </main>
     </div>
 
     <div id="app-shell" class="app-shell" hidden>
       <header class="topbar">
-        <button id="brand-home" class="brand" type="button" aria-label="Go to dashboard">
+        <button id="brand-home" class="brand" type="button" aria-label="Přejít na hlavní stránku">
           <span class="brand-mark">K</span>
           <span>KPZ</span>
         </button>
         <div class="topbar-actions">
           <span id="role-pill" class="role-pill">Student</span>
-          <button id="logout-button" class="button button-quiet button-small" type="button">Log out</button>
+          <button id="logout-button" class="button button-quiet button-small" type="button">Odhlásit</button>
         </div>
       </header>
 
@@ -51,52 +51,52 @@
         <section id="dashboard-view" class="view dashboard-view">
           <div class="hero">
             <div>
-              <p class="eyebrow">Hey, you made it</p>
-              <h1>What are we<br /><span>cramming today?</span></h1>
+              <p class="eyebrow">Čau, jsi tu</p>
+              <h1>Co si dneska<br /><span>nacpeme do hlavy?</span></h1>
             </div>
           </div>
 
           <section class="continue-panel" id="continue-panel" hidden>
             <div>
-              <p class="eyebrow">Jump back in</p>
-              <h2 id="continue-title">Your last set</h2>
+              <p class="eyebrow">Pokračuj, kde jsi skončil</p>
+              <h2 id="continue-title">Poslední sada</h2>
               <div class="progress-track"><span id="continue-progress"></span></div>
             </div>
-            <button id="continue-button" class="button button-light" type="button">Continue</button>
+            <button id="continue-button" class="button button-light" type="button">Pokračovat</button>
           </section>
 
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Our stuff</p>
-              <h2>Pick a set</h2>
+              <p class="eyebrow">Naše materiály</p>
+              <h2>Vyber si sadu</h2>
             </div>
             <label class="search-box">
               <span aria-hidden="true">⌕</span>
-              <input id="set-search" type="search" placeholder="Search sets" aria-label="Search study sets" />
+              <input id="set-search" type="search" placeholder="Hledat sady" aria-label="Hledat studijní sady" />
             </label>
           </div>
           <div id="set-grid" class="set-grid"></div>
-          <div id="empty-sets" class="empty-state" hidden>No sets match that search.</div>
+          <div id="empty-sets" class="empty-state" hidden>Tomuto hledání neodpovídá žádná sada.</div>
         </section>
 
         <section id="set-view" class="view" hidden>
-          <button class="back-button" data-action="dashboard" type="button">‹ All sets</button>
+          <button class="back-button" data-action="dashboard" type="button">‹ Všechny sady</button>
           <div id="set-hero" class="set-hero"></div>
           <div class="mode-grid">
-            <button class="mode-card mode-flashcards" data-mode="flashcards" type="button"><span class="mode-icon">▱</span><span><strong>Flashcards</strong><small>Flip through the full set</small></span></button>
-            <button class="mode-card mode-learn" data-mode="learn" type="button"><span class="mode-icon">◎</span><span><strong>Learn</strong><small>Recall, rate, repeat</small></span></button>
-            <button class="mode-card mode-quiz" data-mode="quiz" type="button"><span class="mode-icon">✓</span><span><strong>Quiz</strong><small>Test what sticks</small></span></button>
-            <button class="mode-card mode-memory" data-mode="memory" type="button"><span class="mode-icon">◫</span><span><strong>Memory</strong><small>Match terms and meanings</small></span></button>
+            <button class="mode-card mode-flashcards" data-mode="flashcards" type="button"><span class="mode-icon">▱</span><span><strong>Kartičky</strong><small>Projdi si celou sadu</small></span></button>
+            <button class="mode-card mode-learn" data-mode="learn" type="button"><span class="mode-icon">◎</span><span><strong>Učení</strong><small>Vybav si, zkontroluj, opakuj</small></span></button>
+            <button class="mode-card mode-quiz" data-mode="quiz" type="button"><span class="mode-icon">✓</span><span><strong>Kvíz</strong><small>Ověř si, co už umíš</small></span></button>
+            <button class="mode-card mode-memory" data-mode="memory" type="button"><span class="mode-icon">◫</span><span><strong>Pexeso</strong><small>Spojuj pojmy a významy</small></span></button>
           </div>
           <section class="term-preview">
-            <div class="section-heading compact"><div><p class="eyebrow">In this set</p><h2>Terms</h2></div><span id="term-count" class="count-label"></span></div>
+            <div class="section-heading compact"><div><p class="eyebrow">V této sadě</p><h2>Pojmy</h2></div><span id="term-count" class="count-label"></span></div>
             <div id="term-list" class="term-list"></div>
           </section>
         </section>
 
         <section id="study-view" class="view study-view" hidden>
           <div class="study-topline">
-            <button id="study-close" class="icon-button round" type="button" aria-label="Close study mode">×</button>
+            <button id="study-close" class="icon-button round" type="button" aria-label="Zavřít studijní režim">×</button>
             <div class="study-progress"><span id="study-progress-bar"></span></div>
             <span id="study-counter" class="study-counter"></span>
           </div>
@@ -104,46 +104,46 @@
         </section>
 
         <section id="worksheets-view" class="view" hidden>
-          <div class="page-heading"><p class="eyebrow">Class resources</p><h1>Worksheets</h1><p>Open or download the materials your class is using now.</p></div>
+          <div class="page-heading"><p class="eyebrow">Společné materiály</p><h1>Pracovní listy</h1><p>Otevři nebo stáhni materiály, které právě používáme.</p></div>
           <div id="worksheet-filters" class="filter-row"></div>
           <div id="worksheet-grid" class="worksheet-grid"></div>
-          <div id="empty-worksheets" class="empty-state" hidden>No worksheets in this category yet.</div>
+          <div id="empty-worksheets" class="empty-state" hidden>V této kategorii zatím nic není.</div>
         </section>
 
         <section id="admin-view" class="view" hidden>
-          <div class="page-heading"><p class="eyebrow">Admin access</p><h1>Content studio</h1><p>Edit a set in your browser, preview it instantly, then download the SQL file to commit to the repository.</p></div>
-          <div class="admin-notice"><strong>Static-site workflow</strong><span>Changes are saved in this browser. Download and replace the matching repository file to publish them for everyone.</span></div>
+          <div class="page-heading"><p class="eyebrow">Administrace</p><h1>Správa obsahu</h1><p>Uprav sadu přímo v prohlížeči, hned si ji prohlédni a potom stáhni SQL soubor do repozitáře.</p></div>
+          <div class="admin-notice"><strong>Jak to funguje</strong><span>Změny se uloží v tomto prohlížeči. Pro zveřejnění stáhni soubor a nahraď jím odpovídající soubor v repozitáři.</span></div>
           <div class="admin-layout">
             <aside class="admin-sidebar">
-              <label for="admin-set-select">Study set</label>
+              <label for="admin-set-select">Studijní sada</label>
               <select id="admin-set-select"></select>
-              <button id="admin-new-set" class="button button-secondary button-wide" type="button">Create new set</button>
+              <button id="admin-new-set" class="button button-secondary button-wide" type="button">Vytvořit novou sadu</button>
               <div class="admin-actions">
-                <button id="admin-save-local" class="button button-primary button-wide" type="button">Save local draft</button>
-                <button id="admin-download-sql" class="button button-light button-wide" type="button">Download .sql</button>
-                <button id="admin-download-index" class="button button-light button-wide" type="button">Download index.json</button>
+                <button id="admin-save-local" class="button button-primary button-wide" type="button">Uložit koncept</button>
+                <button id="admin-download-sql" class="button button-light button-wide" type="button">Stáhnout .sql</button>
+                <button id="admin-download-index" class="button button-light button-wide" type="button">Stáhnout index.json</button>
               </div>
               <p id="admin-status" class="form-message" aria-live="polite"></p>
             </aside>
             <div class="admin-editor">
               <div class="editor-meta-grid">
-                <label>Title<input id="admin-title" type="text" /></label>
-                <label>Subject<input id="admin-subject" type="text" /></label>
-                <label class="span-two">Description<input id="admin-description" type="text" /></label>
-                <label>Color<select id="admin-color"><option value="violet">Violet</option><option value="coral">Coral</option><option value="mint">Mint</option><option value="blue">Blue</option><option value="yellow">Yellow</option></select></label>
-                <label>File name<input id="admin-filename" type="text" placeholder="my-set.sql" /></label>
+                <label>Název<input id="admin-title" type="text" /></label>
+                <label>Předmět<input id="admin-subject" type="text" /></label>
+                <label class="span-two">Popis<input id="admin-description" type="text" /></label>
+                <label>Barva<select id="admin-color"><option value="violet">Fialová</option><option value="coral">Korálová</option><option value="mint">Mátová</option><option value="blue">Modrá</option><option value="yellow">Žlutá</option></select></label>
+                <label>Název souboru<input id="admin-filename" type="text" placeholder="moje-sada.sql" /></label>
               </div>
-              <div class="editor-toolbar"><div><p class="eyebrow">Cards</p><h2>Terms & definitions</h2></div><button id="admin-add-card" class="button button-secondary" type="button">Add card</button></div>
+              <div class="editor-toolbar"><div><p class="eyebrow">Kartičky</p><h2>Pojmy a definice</h2></div><button id="admin-add-card" class="button button-secondary" type="button">Přidat kartičku</button></div>
               <div id="admin-card-list" class="admin-card-list"></div>
             </div>
           </div>
         </section>
       </main>
 
-      <nav class="bottom-nav" aria-label="Primary navigation">
-        <button class="nav-item active" data-nav="dashboard" type="button"><span>⌂</span><small>Home</small></button>
-        <button class="nav-item" data-nav="worksheets" type="button"><span>▤</span><small>Worksheets</small></button>
-        <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><span>⚙</span><small>Admin</small></button>
+      <nav class="bottom-nav" aria-label="Hlavní navigace">
+        <button class="nav-item active" data-nav="dashboard" type="button"><span>⌂</span><small>Domů</small></button>
+        <button class="nav-item" data-nav="worksheets" type="button"><span>▤</span><small>Listy</small></button>
+        <button class="nav-item" id="admin-nav" data-nav="admin" type="button" hidden><span>⚙</span><small>Správa</small></button>
       </nav>
     </div>
 

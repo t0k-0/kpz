@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
   <rect width="1200" height="800" fill="#f7f7fb"/>
-  <text x="80" y="90" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#17192b">Cell structure recap</text>
-  <text x="80" y="132" font-family="Arial, sans-serif" font-size="22" fill="#6e7188">Write the name and function of each labelled organelle.</text>
+  <text x="80" y="90" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#17192b">Opakování stavby buňky</text>
+  <text x="80" y="132" font-family="Arial, sans-serif" font-size="22" fill="#6e7188">Napiš název a funkci každé označené organely.</text>
   <ellipse cx="480" cy="440" rx="300" ry="230" fill="#e6fbf5" stroke="#3ccca5" stroke-width="10"/>
   <circle cx="420" cy="410" r="92" fill="#dcd4ff" stroke="#7558e8" stroke-width="8"/>
   <ellipse cx="630" cy="350" rx="70" ry="34" fill="#ffd8d0" stroke="#ff785f" stroke-width="7"/>
@@ -15,9 +15,9 @@
     <text x="790" y="599">3. ____________________</text><text x="90" y="599">4. ____________________</text>
   </g>
   <g font-family="Arial, sans-serif" font-size="19" fill="#6e7188">
-    <text x="90" y="680">1. Function: _____________________________________________</text>
-    <text x="90" y="725">2. Function: _____________________________________________</text>
-    <text x="630" y="680">3. Function: _____________________________________________</text>
-    <text x="630" y="725">4. Function: _____________________________________________</text>
+    <text x="90" y="680">1. Funkce: ______________________________________________</text>
+    <text x="90" y="725">2. Funkce: ______________________________________________</text>
+    <text x="630" y="680">3. Funkce: ______________________________________________</text>
+    <text x="630" y="725">4. Funkce: ______________________________________________</text>
   </g>
 </svg>

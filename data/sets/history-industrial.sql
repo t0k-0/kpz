@@ -1,17 +1,17 @@
 -- id: history-industrial
--- title: Industrial Revolution
--- subject: History
--- description: People, inventions and social changes that reshaped Europe in the 18th and 19th centuries.
+-- title: Průmyslová revoluce
+-- subject: Dějepis
+-- description: Lidé, vynálezy a společenské změny, které proměnily Evropu v 18. a 19. století.
 -- color: blue
 
 INSERT INTO cards (term, definition, hint, image) VALUES
-  ('Industrial Revolution', 'The transition from hand production to machine manufacturing.', NULL, NULL),
-  ('James Watt', 'Engineer whose improvements made the steam engine far more efficient.', NULL, NULL),
-  ('urbanisation', 'The growth of towns and cities as people move from rural areas.', NULL, NULL),
-  ('factory system', 'Manufacturing in which workers and machines are gathered in one place.', NULL, NULL),
-  ('steam engine', 'A machine that uses steam pressure to create mechanical motion.', NULL, NULL),
-  ('spinning jenny', 'A machine that allowed one worker to spin several threads at once.', NULL, NULL),
-  ('mass production', 'Making large quantities of standardised goods, usually with machines.', NULL, NULL),
-  ('working class', 'People who earn wages mainly through manual or industrial labour.', NULL, NULL),
-  ('child labour', 'The employment of children, often in dangerous factory or mine work.', NULL, NULL),
-  ('railway', 'A transport system that moved people and goods quickly using steam locomotives.', NULL, NULL);
+  ('Průmyslová revoluce', 'Přechod od ruční výroby ke strojové průmyslové výrobě.', NULL, NULL),
+  ('James Watt', 'Inženýr, jehož vylepšení výrazně zvýšila účinnost parního stroje.', NULL, NULL),
+  ('Urbanizace', 'Růst měst způsobený stěhováním lidí z venkova.', NULL, NULL),
+  ('Tovární systém', 'Způsob výroby, při kterém jsou dělníci a stroje soustředěni na jednom místě.', NULL, NULL),
+  ('Parní stroj', 'Stroj využívající tlak páry k vytváření mechanického pohybu.', NULL, NULL),
+  ('Spinning jenny', 'Stroj, který umožnil jednomu dělníkovi spřádat několik vláken současně.', NULL, NULL),
+  ('Masová výroba', 'Výroba velkého množství standardizovaného zboží, obvykle pomocí strojů.', NULL, NULL),
+  ('Dělnická třída', 'Lidé, kteří si vydělávají převážně manuální nebo průmyslovou prací.', NULL, NULL),
+  ('Dětská práce', 'Zaměstnávání dětí, často v nebezpečných továrnách nebo dolech.', NULL, NULL),
+  ('Železnice', 'Dopravní systém, který pomocí parních lokomotiv rychle převážel lidi a zboží.', NULL, NULL);

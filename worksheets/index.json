@@ -1,16 +1,16 @@
 {
   "worksheets": [
     {
-      "title": "Cell structure recap",
-      "description": "Label the organelles and connect each part to its function.",
-      "category": "Biology",
+      "title": "Opakování stavby buňky",
+      "description": "Popiš organely a přiřaď každé části její funkci.",
+      "category": "Biologie",
       "file": "cell-structure-recap.svg",
       "thumbnail": "cell-structure-recap.svg"
     },
     {
-      "title": "Adding your own worksheets",
-      "description": "A short guide for adding PDF, image and document resources.",
-      "category": "Guide",
+      "title": "Jak přidat vlastní pracovní list",
+      "description": "Krátký návod pro přidání PDF, obrázků a dalších dokumentů.",
+      "category": "Návod",
       "file": "README.md"
     }
   ]

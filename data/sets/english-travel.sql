@@ -1,19 +1,19 @@
 -- id: english-travel
--- title: Travel essentials
--- subject: English
--- description: Useful vocabulary for planning a journey, finding your way and checking in.
+-- title: Cestovní angličtina
+-- subject: Angličtina
+-- description: Užitečná slovíčka pro plánování cesty, orientaci a odbavení.
 -- color: coral
 
 INSERT INTO cards (term, definition, hint, image) VALUES
-  ('accommodation', 'a place where you stay during a trip', NULL, NULL),
-  ('departure', 'the act or time of leaving a place', NULL, NULL),
-  ('destination', 'the place to which someone is travelling', NULL, NULL),
-  ('itinerary', 'a detailed plan or route for a journey', NULL, NULL),
-  ('luggage', 'bags and suitcases taken on a journey', NULL, NULL),
-  ('reservation', 'an arrangement to keep a seat, room or table for someone', NULL, NULL),
-  ('sightseeing', 'visiting interesting places as a tourist', NULL, NULL),
-  ('boarding pass', 'a document that allows a passenger to board a plane', NULL, NULL),
-  ('delay', 'a period of waiting because something is late', NULL, NULL),
-  ('currency', 'the money used in a particular country', NULL, NULL),
-  ('landmark', 'a building or feature that is easy to recognise', NULL, NULL),
-  ('single ticket', 'a ticket for a journey to a place but not back again', NULL, NULL);
+  ('accommodation', 'ubytování, místo, kde během cesty bydlíš', NULL, NULL),
+  ('departure', 'odjezd nebo čas opuštění určitého místa', NULL, NULL),
+  ('destination', 'cíl, do kterého člověk cestuje', NULL, NULL),
+  ('itinerary', 'podrobný plán nebo trasa cesty', NULL, NULL),
+  ('luggage', 'zavazadla, tašky a kufry převážené na cestě', NULL, NULL),
+  ('reservation', 'rezervace místa, pokoje nebo stolu', NULL, NULL),
+  ('sightseeing', 'prohlížení zajímavých míst jako turista', NULL, NULL),
+  ('boarding pass', 'palubní vstupenka opravňující cestujícího nastoupit do letadla', NULL, NULL),
+  ('delay', 'zpoždění nebo čekání, protože něco nejede či nezačíná včas', NULL, NULL),
+  ('currency', 'měna používaná v určité zemi', NULL, NULL),
+  ('landmark', 'výrazná budova nebo místo, které lze snadno poznat', NULL, NULL),
+  ('single ticket', 'jednosměrná jízdenka bez zpáteční cesty', NULL, NULL);

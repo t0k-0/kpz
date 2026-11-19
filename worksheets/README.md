@@ -1,17 +1,17 @@
-# KPZ worksheets
+# Pracovní listy KPZ
 
-Put class worksheets in this folder. PDF, PNG, JPG, SVG and other files that browsers can open work well.
+Do této složky ukládej společné pracovní listy. Dobře fungují soubory PDF, PNG, JPG, SVG a další formáty, které umí otevřít prohlížeč.
 
-To show a file in the KPZ gallery, add an object to `index.json`:
+Pokud chceš soubor zobrazit v galerii KPZ, přidej objekt do `index.json`:
 
 ```json
 {
-  "title": "Worksheet title",
-  "description": "A short description for classmates.",
-  "category": "Biology",
-  "file": "worksheet.pdf",
-  "thumbnail": "worksheet-preview.jpg"
+  "title": "Název pracovního listu",
+  "description": "Krátký popis pro ostatní.",
+  "category": "Biologie",
+  "file": "pracovni-list.pdf",
+  "thumbnail": "nahled-pracovniho-listu.jpg"
 }
 ```
 
-`thumbnail` is optional. Paths are relative to this folder. Keep file names lowercase and use hyphens instead of spaces.
+Položka `thumbnail` je volitelná. Cesty jsou relativní k této složce. Názvy souborů piš malými písmeny a místo mezer používej pomlčky.

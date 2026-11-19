@@ -41,13 +41,13 @@ async function init() {
     restoreSession();
   } catch (error) {
     console.error(error);
-    $("#auth-error").textContent = "KPZ could not load its content files. Serve the repository through a web server and try again.";
+    $("#auth-error").textContent = "KPZ se nepodařilo načíst. Spusť web přes lokální server a zkus to znovu.";
   }
 }
 
 async function fetchJson(path) {
   const response = await fetch(path, { cache: "no-store" });
-  if (!response.ok) throw new Error(`Could not load ${path}`);
+  if (!response.ok) throw new Error(`Nepodařilo se načíst ${path}`);
   return response.json();
 }
 
@@ -55,7 +55,7 @@ async function loadAllSets() {
   const loaded = await Promise.all(state.setIndex.map(async (entry) => {
     const draft = localStorage.getItem(`kpz:draft:${entry.id}`);
     const sql = draft || await fetch(`data/sets/${entry.file}`, { cache: "no-store" }).then((response) => {
-      if (!response.ok) throw new Error(`Could not load ${entry.file}`);
+      if (!response.ok) throw new Error(`Nepodařilo se načíst ${entry.file}`);
       return response.text();
     });
     return { ...parseStudySet(sql, entry.id), id: entry.id, file: entry.file, isDraft: Boolean(draft) };
@@ -69,8 +69,8 @@ function bindGlobalEvents() {
     const input = $("#access-code");
     const showing = input.type === "text";
     input.type = showing ? "password" : "text";
-    $("#toggle-password").textContent = showing ? "Show" : "Hide";
-    $("#toggle-password").setAttribute("aria-label", showing ? "Show password" : "Hide password");
+    $("#toggle-password").textContent = showing ? "Ukázat" : "Skrýt";
+    $("#toggle-password").setAttribute("aria-label", showing ? "Zobrazit heslo" : "Skrýt heslo");
   });
   $("#logout-button").addEventListener("click", logout);
   $("#brand-home").addEventListener("click", () => showView("dashboard"));
@@ -96,7 +96,7 @@ async function handleLogin(event) {
   if (hash === state.config.access.adminHash) role = "admin";
   else if (hash === state.config.access.studentHash) role = "student";
   if (!role) {
-    $("#auth-error").textContent = "That code does not match. Check it and try again.";
+    $("#auth-error").textContent = "Tenhle kód nesedí. Zkontroluj ho a zkus to znovu.";
     input.select();
     return;
   }
@@ -120,9 +120,9 @@ function openApp(role) {
   $("#auth-screen").hidden = true;
   $("#app-shell").hidden = false;
   $("#admin-nav").hidden = role !== "admin";
-  $("#role-pill").textContent = role === "admin" ? "Admin" : "Student";
+  $("#role-pill").textContent = role === "admin" ? "Správce" : "Student";
   renderDashboard();
-  renderWorksheets("All");
+  renderWorksheets("Vše");
   showView("dashboard");
 }
 
@@ -143,7 +143,7 @@ function showView(name) {
   $$(".view").forEach((view) => { view.hidden = view.id !== `${name}-view`; });
   $$(".nav-item").forEach((button) => button.classList.toggle("active", button.dataset.nav === name));
   if (name === "dashboard") renderDashboard();
-  if (name === "worksheets") renderWorksheets("All");
+  if (name === "worksheets") renderWorksheets("Vše");
   if (name === "admin") renderAdmin();
   $("#main-content").focus({ preventScroll: true });
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -172,7 +172,7 @@ function renderSetGrid() {
     $(".set-subject", card).textContent = set.subject;
     $("h3", card).textContent = set.title;
     $("p", card).textContent = set.description;
-    $(".set-size", card).textContent = `${set.cards.length} terms${set.isDraft ? " · local draft" : ""}`;
+    $(".set-size", card).textContent = `${czechCount(set.cards.length, "pojem", "pojmy", "pojmů")}${set.isDraft ? " · místní koncept" : ""}`;
     $("button", card).addEventListener("click", () => openSet(set.id));
     grid.append(card);
   }
@@ -186,7 +186,7 @@ function openSet(id) {
   const hero = $("#set-hero");
   hero.style.background = colorMap[set.color] || colorMap.violet;
   hero.innerHTML = `<p class="eyebrow">${escapeHtml(set.subject)}</p><h1>${escapeHtml(set.title)}</h1><p>${escapeHtml(set.description)}</p>`;
-  $("#term-count").textContent = `${set.cards.length} terms`;
+  $("#term-count").textContent = czechCount(set.cards.length, "pojem", "pojmy", "pojmů");
   $("#term-list").innerHTML = set.cards.map((card) => `<div class="term-row"><strong>${escapeHtml(card.term)}</strong><span>${escapeHtml(card.definition)}</span></div>`).join("");
   showView("set");
   recordActivity(set.id, null);
@@ -232,25 +232,25 @@ function renderFlashcards() {
   setStudyProgress(index + 1, cards.length);
   $("#study-stage").innerHTML = `
     <div class="flashcard-score" aria-live="polite">
-      <span class="score-wrong">Again <b id="flash-wrong-count">${state.study.incorrect}</b></span>
-      <span class="score-right">Got it <b id="flash-right-count">${state.study.correct}</b></span>
+      <span class="score-wrong">Znovu <b id="flash-wrong-count">${state.study.incorrect}</b></span>
+      <span class="score-right">Umím <b id="flash-right-count">${state.study.correct}</b></span>
     </div>
     <div class="flashcard-wrap" id="flashcard-wrap">
-      <span class="swipe-stamp wrong">AGAIN</span>
-      <span class="swipe-stamp right">GOT IT</span>
-      <button class="flashcard" id="active-flashcard" type="button" aria-label="Flip card. Swipe left for again or right for got it.">
+      <span class="swipe-stamp wrong">ZNOVU</span>
+      <span class="swipe-stamp right">UMÍM</span>
+      <button class="flashcard" id="active-flashcard" type="button" aria-label="Otočit kartičku. Přejeď vlevo pro znovu nebo vpravo pro umím.">
         <span class="flashcard-inner">
-          <span class="flashcard-face front"><small>Term</small><strong>${escapeHtml(card.term)}</strong><span>Click or tap to reveal</span></span>
-          <span class="flashcard-face back"><small>Definition</small><strong>${escapeHtml(card.definition)}</strong><span>Click or tap to flip back</span></span>
+          <span class="flashcard-face front"><small>Pojem</small><strong>${escapeHtml(card.term)}</strong><span>Klikni nebo klepni pro otočení</span></span>
+          <span class="flashcard-face back"><small>Definice</small><strong>${escapeHtml(card.definition)}</strong><span>Klikni nebo klepni pro návrat</span></span>
         </span>
       </button>
     </div>
     <div class="flashcard-controls">
-      <button class="button button-wrong" id="card-wrong" type="button">← Again</button>
-      <button class="button button-light" id="card-flip" type="button">Flip</button>
-      <button class="button button-right" id="card-right" type="button">Got it →</button>
+      <button class="button button-wrong" id="card-wrong" type="button">← Znovu</button>
+      <button class="button button-light" id="card-flip" type="button">Otočit</button>
+      <button class="button button-right" id="card-right" type="button">Umím →</button>
     </div>
-    <p class="flashcard-hint">Swipe on your phone · use ← and → on a keyboard</p>`;
+    <p class="flashcard-hint">Na telefonu přejeď prstem · na klávesnici použij ← a →</p>`;
 
   const flashcard = $("#active-flashcard");
   const wrap = $("#flashcard-wrap");
@@ -332,10 +332,10 @@ function gradeFlashcard(gotIt) {
     if (state.study !== studySession || state.study.mode !== "flashcards") return;
     if (state.study.index === state.study.cards.length - 1) {
       return renderResults(
-        "Flashcards done",
+        "Kartičky hotové",
         state.study.correct,
         state.study.cards.length,
-        `${state.study.correct} got it · ${state.study.incorrect} to try again`,
+        `${state.study.correct} umím · ${state.study.incorrect} zopakovat`,
       );
     }
     state.study.index += 1;
@@ -347,16 +347,16 @@ function gradeFlashcard(gotIt) {
 
 function renderLearn() {
   const { cards, index } = state.study;
-  if (index >= cards.length) return renderResults("Learning round complete", state.study.correct, cards.length);
+  if (index >= cards.length) return renderResults("Kolo učení je hotové", state.study.correct, cards.length);
   const card = cards[index];
   setStudyProgress(index + 1, cards.length);
   $("#study-stage").innerHTML = `
     <div class="learn-prompt">
-      <span class="question-label">Write the matching term</span>
+      <span class="question-label">Napiš odpovídající pojem</span>
       <h2>${escapeHtml(card.definition)}</h2>
       <form id="learn-form">
-        <input class="learn-answer" id="learn-input" autocomplete="off" placeholder="Type your answer" aria-label="Your answer" required />
-        <button class="button button-primary button-wide" type="submit">Check answer</button>
+        <input class="learn-answer" id="learn-input" autocomplete="off" placeholder="Napiš odpověď" aria-label="Tvoje odpověď" required />
+        <button class="button button-primary button-wide" type="submit">Zkontrolovat</button>
       </form>
       <div id="learn-feedback"></div>
     </div>`;
@@ -368,7 +368,7 @@ function renderLearn() {
     state.study.answered = true;
     if (correct) state.study.correct += 1;
     const feedback = $("#learn-feedback");
-    feedback.innerHTML = `<div class="answer-feedback ${correct ? "correct" : "incorrect"}">${correct ? "Nice — that’s correct." : `The answer is <strong>${escapeHtml(card.term)}</strong>.`}</div><button class="button button-primary button-wide" id="learn-next" type="button">Continue</button>`;
+    feedback.innerHTML = `<div class="answer-feedback ${correct ? "correct" : "incorrect"}">${correct ? "Jo, správně!" : `Správná odpověď je <strong>${escapeHtml(card.term)}</strong>.`}</div><button class="button button-primary button-wide" id="learn-next" type="button">Pokračovat</button>`;
     $("#learn-form button").hidden = true;
     $("#learn-input").disabled = true;
     $("#learn-next").addEventListener("click", advanceLearn);
@@ -386,14 +386,14 @@ function advanceLearn() {
 function renderQuiz() {
   const limit = Math.min(10, state.study.cards.length);
   const { index } = state.study;
-  if (index >= limit) return renderResults("Quiz complete", state.study.correct, limit);
+  if (index >= limit) return renderResults("Kvíz je hotový", state.study.correct, limit);
   const card = state.study.cards[index];
   const distractors = shuffle(state.currentSet.cards.filter((item) => item.term !== card.term)).slice(0, 3).map((item) => item.definition);
   const answers = shuffle([card.definition, ...distractors]);
   setStudyProgress(index + 1, limit);
   $("#study-stage").innerHTML = `
     <div class="quiz-question">
-      <span class="question-label eyebrow">Choose the definition</span>
+      <span class="question-label eyebrow">Vyber správnou definici</span>
       <h2>${escapeHtml(card.term)}</h2>
       <div class="answer-list">${answers.map((answer) => `<button class="answer-option" type="button" data-answer="${escapeAttribute(answer)}">${escapeHtml(answer)}</button>`).join("")}</div>
     </div>`;
@@ -412,7 +412,7 @@ function answerQuiz(button, correctAnswer, limit) {
   if (!isCorrect) button.classList.add("incorrect");
   const next = document.createElement("button");
   next.className = "button button-primary button-wide";
-  next.textContent = state.study.index === limit - 1 ? "See results" : "Next question";
+  next.textContent = state.study.index === limit - 1 ? "Zobrazit výsledky" : "Další otázka";
   next.addEventListener("click", () => {
     state.study.index += 1;
     state.study.answered = false;
@@ -430,7 +430,7 @@ function renderMemory() {
   ])).map((card, index) => ({ ...card, id: index }));
   state.study.memory = { deck, open: [], matched: new Set(), moves: 0, seconds: 0, locked: false };
   setStudyProgress(0, pairs.length);
-  $("#study-stage").innerHTML = `<div class="memory-meta"><span id="memory-moves">0 moves</span><span id="memory-time">0:00</span></div><div class="memory-grid">${deck.map((card) => `<button class="memory-card" type="button" data-id="${card.id}">${escapeHtml(card.text)}</button>`).join("")}</div>`;
+  $("#study-stage").innerHTML = `<div class="memory-meta"><span id="memory-moves">0 tahů</span><span id="memory-time">0:00</span></div><div class="memory-grid">${deck.map((card) => `<button class="memory-card" type="button" data-id="${card.id}">${escapeHtml(card.text)}</button>`).join("")}</div>`;
   $$(".memory-card").forEach((button) => button.addEventListener("click", () => flipMemoryCard(Number(button.dataset.id))));
   state.memoryTimer = setInterval(() => {
     state.study.memory.seconds += 1;
@@ -446,7 +446,7 @@ function flipMemoryCard(id) {
   $(`.memory-card[data-id="${id}"]`).classList.add("revealed");
   if (memory.open.length < 2) return;
   memory.moves += 1;
-  $("#memory-moves").textContent = `${memory.moves} moves`;
+  $("#memory-moves").textContent = czechCount(memory.moves, "tah", "tahy", "tahů");
   const [firstId, secondId] = memory.open;
   const first = memory.deck[firstId];
   const second = memory.deck[secondId];
@@ -460,7 +460,7 @@ function flipMemoryCard(id) {
     if (memory.matched.size === memory.deck.length / 2) {
       clearInterval(state.memoryTimer);
       recordActivity(state.currentSet.id, 100);
-      setTimeout(() => renderResults("Memory board cleared", memory.deck.length / 2, memory.deck.length / 2, `${memory.moves} moves · ${formatTime(memory.seconds)}`), 450);
+      setTimeout(() => renderResults("Pexeso je hotové", memory.deck.length / 2, memory.deck.length / 2, `${czechCount(memory.moves, "tah", "tahy", "tahů")} · ${formatTime(memory.seconds)}`), 450);
     }
   } else {
     memory.locked = true;
@@ -481,29 +481,29 @@ function renderResults(title, correct, total, note = "") {
     <div class="result-card">
       <div class="result-score">${percent}%</div>
       <h2>${escapeHtml(title)}</h2>
-      <p>${note || `${correct} of ${total} correct`}</p>
-      <div class="learn-actions"><button class="button button-light" id="result-back" type="button">Back to set</button><button class="button button-primary" id="result-again" type="button">Study again</button></div>
+      <p>${note || `${correct} z ${total} správně`}</p>
+      <div class="learn-actions"><button class="button button-light" id="result-back" type="button">Zpět k sadě</button><button class="button button-primary" id="result-again" type="button">Ještě jednou</button></div>
     </div>`;
   $("#result-back").addEventListener("click", closeStudy);
   $("#result-again").addEventListener("click", () => startMode(state.study.mode));
 }
 
-function renderWorksheets(activeCategory = "All") {
-  const categories = ["All", ...new Set(state.worksheets.map((item) => item.category))];
+function renderWorksheets(activeCategory = "Vše") {
+  const categories = ["Vše", ...new Set(state.worksheets.map((item) => item.category))];
   $("#worksheet-filters").innerHTML = categories.map((category) => `<button class="filter-chip ${category === activeCategory ? "active" : ""}" type="button" data-category="${escapeAttribute(category)}">${escapeHtml(category)}</button>`).join("");
   $$(".filter-chip").forEach((button) => button.addEventListener("click", () => renderWorksheets(button.dataset.category)));
-  const worksheets = state.worksheets.filter((item) => activeCategory === "All" || item.category === activeCategory);
+  const worksheets = state.worksheets.filter((item) => activeCategory === "Vše" || item.category === activeCategory);
   $("#worksheet-grid").innerHTML = worksheets.map((item) => {
     const extension = item.file.split(".").pop().toUpperCase();
     const preview = item.thumbnail ? `<img src="worksheets/${escapeAttribute(item.thumbnail)}" alt="" />` : escapeHtml(extension);
-    return `<article class="worksheet-card"><div class="worksheet-preview">${preview}</div><div class="worksheet-card-body"><span class="set-subject">${escapeHtml(item.category)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><div class="worksheet-card-actions"><a class="button button-light" href="worksheets/${escapeAttribute(item.file)}" target="_blank" rel="noopener">Open</a><a class="button button-secondary" href="worksheets/${escapeAttribute(item.file)}" download>Download</a></div></div></article>`;
+    return `<article class="worksheet-card"><div class="worksheet-preview">${preview}</div><div class="worksheet-card-body"><span class="set-subject">${escapeHtml(item.category)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><div class="worksheet-card-actions"><a class="button button-light" href="worksheets/${escapeAttribute(item.file)}" target="_blank" rel="noopener">Otevřít</a><a class="button button-secondary" href="worksheets/${escapeAttribute(item.file)}" download>Stáhnout</a></div></div></article>`;
   }).join("");
   $("#empty-worksheets").hidden = worksheets.length > 0;
 }
 
 function renderAdmin() {
   const select = $("#admin-set-select");
-  select.innerHTML = state.sets.map((set) => `<option value="${escapeAttribute(set.id)}">${escapeHtml(set.title)}${set.isDraft ? " (draft)" : ""}</option>`).join("");
+  select.innerHTML = state.sets.map((set) => `<option value="${escapeAttribute(set.id)}">${escapeHtml(set.title)}${set.isDraft ? " (koncept)" : ""}</option>`).join("");
   const chosenId = state.currentSet?.id && state.sets.some((set) => set.id === state.currentSet.id) ? state.currentSet.id : state.sets[0]?.id;
   if (chosenId) {
     select.value = chosenId;
@@ -521,13 +521,13 @@ function populateAdminEditor(id) {
   $("#admin-filename").value = set.file;
   $("#admin-card-list").innerHTML = "";
   set.cards.forEach((card) => addAdminCard(card.term, card.definition));
-  $("#admin-status").textContent = set.isDraft ? "Showing a local draft." : "";
+  $("#admin-status").textContent = set.isDraft ? "Zobrazuje se místní koncept." : "";
 }
 
 function addAdminCard(term = "", definition = "") {
   const row = document.createElement("div");
   row.className = "admin-card-row";
-  row.innerHTML = `<input class="admin-term" type="text" value="${escapeAttribute(term)}" placeholder="Term" aria-label="Term" /><input class="admin-definition" type="text" value="${escapeAttribute(definition)}" placeholder="Definition" aria-label="Definition" /><button class="remove-card" type="button" aria-label="Remove card">×</button>`;
+  row.innerHTML = `<input class="admin-term" type="text" value="${escapeAttribute(term)}" placeholder="Pojem" aria-label="Pojem" /><input class="admin-definition" type="text" value="${escapeAttribute(definition)}" placeholder="Definice" aria-label="Definice" /><button class="remove-card" type="button" aria-label="Odstranit kartičku">×</button>`;
   $(".remove-card", row).addEventListener("click", () => row.remove());
   $("#admin-card-list").append(row);
   if (!term) $(".admin-term", row).focus();
@@ -540,8 +540,8 @@ function collectAdminSet() {
   return {
     id: existing?.id || slugify($("#admin-title").value),
     file: filename,
-    title: $("#admin-title").value.trim() || "Untitled set",
-    subject: $("#admin-subject").value.trim() || "General",
+    title: $("#admin-title").value.trim() || "Sada bez názvu",
+    subject: $("#admin-subject").value.trim() || "Obecné",
     description: $("#admin-description").value.trim(),
     color: $("#admin-color").value,
     cards: $$(".admin-card-row").map((row) => ({
@@ -554,21 +554,21 @@ function collectAdminSet() {
 
 function createNewSetDraft() {
   let id = `new-set-${Date.now()}`;
-  const set = { id, file: "new-study-set.sql", title: "New study set", subject: "General", description: "Add a short description.", color: "violet", cards: [{ term: "First term", definition: "First definition" }], isDraft: true };
+  const set = { id, file: "nova-studijni-sada.sql", title: "Nová studijní sada", subject: "Obecné", description: "Přidej krátký popis.", color: "violet", cards: [{ term: "První pojem", definition: "První definice" }], isDraft: true };
   state.sets.push(set);
   state.setIndex.push({ id, file: set.file });
   const select = $("#admin-set-select");
-  const option = new Option(`${set.title} (draft)`, id);
+  const option = new Option(`${set.title} (koncept)`, id);
   select.add(option);
   select.value = id;
   populateAdminEditor(id);
-  $("#admin-status").textContent = "New draft created. Rename it, add cards, then save or download.";
+  $("#admin-status").textContent = "Nový koncept je připravený. Přejmenuj ho, přidej kartičky a potom ho ulož nebo stáhni.";
 }
 
 function saveAdminDraft() {
   const edited = collectAdminSet();
   if (!edited.cards.length) {
-    $("#admin-status").textContent = "Add at least one complete term and definition.";
+    $("#admin-status").textContent = "Přidej alespoň jeden kompletní pojem a definici.";
     return;
   }
   const index = state.sets.findIndex((set) => set.id === edited.id);
@@ -578,7 +578,7 @@ function saveAdminDraft() {
   if (indexEntry) indexEntry.file = edited.file;
   else state.setIndex.push({ id: edited.id, file: edited.file });
   localStorage.setItem(`kpz:draft:${edited.id}`, serializeStudySet(edited));
-  $("#admin-status").textContent = "Draft saved in this browser.";
+  $("#admin-status").textContent = "Koncept je uložený v tomto prohlížeči.";
   renderAdmin();
   $("#admin-set-select").value = edited.id;
   populateAdminEditor(edited.id);
@@ -587,11 +587,11 @@ function saveAdminDraft() {
 function downloadAdminSql() {
   const edited = collectAdminSet();
   if (!edited.cards.length) {
-    $("#admin-status").textContent = "Add at least one complete card before downloading.";
+    $("#admin-status").textContent = "Před stažením přidej alespoň jednu kompletní kartičku.";
     return;
   }
   downloadText(edited.file, serializeStudySet(edited), "text/sql");
-  $("#admin-status").textContent = `Downloaded ${edited.file}. Replace that file in data/sets/.`;
+  $("#admin-status").textContent = `Soubor ${edited.file} je stažený. Nahraď jím odpovídající soubor v data/sets/.`;
 }
 
 function downloadSetIndex() {
@@ -599,7 +599,7 @@ function downloadSetIndex() {
   const manifest = { sets: state.setIndex.map((entry) => entry.id === edited.id ? { id: edited.id, file: edited.file } : entry) };
   if (!manifest.sets.some((entry) => entry.id === edited.id)) manifest.sets.push({ id: edited.id, file: edited.file });
   downloadText("index.json", `${JSON.stringify(manifest, null, 2)}\n`, "application/json");
-  $("#admin-status").textContent = "Downloaded index.json. Replace data/sets/index.json with it when adding or renaming a set.";
+  $("#admin-status").textContent = "Soubor index.json je stažený. Při přidání nebo přejmenování sady jím nahraď data/sets/index.json.";
 }
 
 function downloadText(filename, content, type, delay = 0) {
@@ -624,7 +624,7 @@ function parseStudySet(sql, fallbackId) {
   return {
     id: metadata.id || fallbackId,
     title: metadata.title || fallbackId,
-    subject: metadata.subject || "General",
+    subject: metadata.subject || "Obecné",
     description: metadata.description || "",
     color: metadata.color || "violet",
     cards,
@@ -681,6 +681,12 @@ function serializeStudySet(set) {
 
 function sqlEscape(value) { return String(value).replaceAll("'", "''"); }
 
+function czechCount(count, one, few, many) {
+  const absolute = Math.abs(count);
+  const word = absolute === 1 ? one : absolute >= 2 && absolute <= 4 ? few : many;
+  return `${count} ${word}`;
+}
+
 function recordActivity(setId, progress) {
   const activity = getActivity();
   activity.lastSet = setId;
@@ -707,7 +713,7 @@ function normalizeAnswer(value) {
 }
 
 function formatTime(seconds) { return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
-function slugify(value) { return String(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "study-set"; }
+function slugify(value) { return String(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "studijni-sada"; }
 function sanitizeFilename(value) { const base = String(value).trim().replace(/[^a-zA-Z0-9._-]/g, "-"); return base.toLowerCase().endsWith(".sql") ? base : `${base}.sql`; }
 function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char])); }
 function escapeAttribute(value) { return escapeHtml(value).replace(/'/g, "&#39;"); }

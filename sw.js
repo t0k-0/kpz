@@ -1,4 +1,4 @@
-const CACHE = "kpz-v3-student-code";
+const CACHE = "kpz-v4-czech";
 const CORE = [
   "./",
   "./index.html",
